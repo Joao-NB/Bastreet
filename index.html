@@ -37,7 +37,9 @@
           <label>Localização<input name="location" placeholder="Fortaleza, CE" required><span class="field-error">Informe sua cidade.</span></label><button class="primary-cta auth-submit" type="button" id="next-register">Continuar <span>→</span></button>
         </div>
         <div class="register-step" data-step="2">
-          <div class="field-pair"><label>Posição<select name="position" required><option value="">Selecione</option><option>Armador</option><option>Ala-armador</option><option>Ala</option><option>Ala-pivô</option><option>Pivô</option></select><span class="field-error">Escolha sua posição.</span></label><label>Nível<select name="level" required><option value="">Selecione</option><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select><span class="field-error">Escolha seu nível.</span></label></div>
+          <div class="field-pair"><label>Posição<select name="position" required><option value="">Selecione</option><option>Armador</option><option>Ala-armador</option><option>Ala</option><option>Ala-pivô</option><option>Pivô</option></select><span class="field-error">Escolha sua posição.</span></label><label>Gênero<select name="gender" required><option value="">Selecione</option><option>Mulher</option><option>Homem</option><option>Não binário</option><option>Prefiro não informar</option></select><span class="field-error">Selecione uma opção.</span></label></div>
+          <label>Nível de jogo<select name="level" required><option value="">Selecione</option><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select><span class="field-error">Escolha seu nível.</span></label>
+          <fieldset class="day-picker"><legend>Dias disponíveis</legend><label><input type="checkbox" checked>Ter</label><label><input type="checkbox">Qua</label><label><input type="checkbox" checked>Qui</label><label><input type="checkbox" checked>Sáb</label><label><input type="checkbox">Dom</label></fieldset>
           <label>E-mail<input type="email" name="email" placeholder="voce@email.com" required><span class="field-error">Informe um e-mail válido.</span></label>
           <label>Crie uma senha<div class="password-field"><input type="password" name="password" placeholder="Mínimo de 6 caracteres" minlength="6" required><button type="button" class="toggle-password">◉</button></div><span class="field-error">Use pelo menos 6 caracteres.</span></label>
           <label class="check-label"><input type="checkbox" required><span>Li e aceito os termos de uso e privacidade.</span></label><button class="primary-cta auth-submit" type="submit">Criar meu perfil <span>→</span></button>
@@ -50,7 +52,7 @@
       <span class="brand-ball" aria-hidden="true">●</span><span>BA<span>STREET</span></span>
     </a>
     <div class="top-actions">
-      <button class="icon-button" aria-label="Mensagens" data-toast="Você não tem novas mensagens">⌁<span class="notification-dot"></span></button>
+      <button class="icon-button" aria-label="Mensagens" data-page="chat">⌁<span class="notification-dot"></span></button>
       <button class="avatar-button" data-page="perfil" aria-label="Abrir perfil"><span>JG</span></button>
     </div>
   </header>
@@ -81,8 +83,8 @@
         </div>
 
         <aside class="elo-card">
-          <div class="elo-top"><span class="rank-badge">IV</span><span><small>SEU ELO</small><strong>1.240</strong></span><span class="trend">↗ 34</span></div>
-          <div class="progress-label"><span>Bronze IV</span><span>60% para Bronze III</span></div>
+          <div class="elo-top"><span class="rank-badge">12</span><span><small>NÍVEL TÉCNICO</small><strong>78</strong></span><span class="trend">↗ 4</span></div>
+          <div class="progress-label"><span>Nível 12</span><span>76% para o nível 13</span></div>
           <div class="progress"><i></i></div>
           <div class="elo-stats"><span><strong>18</strong><small>Partidas</small></span><span><strong>11</strong><small>Vitórias</small></span><span><strong>61%</strong><small>Aproveitamento</small></span></div>
         </aside>
@@ -104,7 +106,7 @@
     </section>
 
     <section class="page" id="ranking" aria-labelledby="ranking-title">
-      <p class="eyebrow">QUEM MANDA NA QUADRA</p><h1 class="page-title" id="ranking-title">Ranking</h1>
+      <p class="eyebrow">CAMPEONATO SEMESTRAL</p><h1 class="page-title" id="ranking-title">Ranking</h1><p class="page-lead">Sua posição semestral cresce com presença e consistência. Treinos coletivos valem mais pontos por promoverem convivência e jogo real.</p>
       <div class="filter-chips"><button class="active">Minha cidade</button><button>Geral</button><button>Amigos</button></div>
       <div class="podium"><div class="podium-player second"><div class="photo">PD</div><strong>Pedro</strong><span>1.487</span><i>2</i></div><div class="podium-player first"><div class="crown">♛</div><div class="photo">JP</div><strong>João P.</strong><span>1.520</span><i>1</i></div><div class="podium-player third"><div class="photo">RF</div><strong>Rafael</strong><span>1.452</span><i>3</i></div></div>
       <div class="ranking-list">
@@ -115,22 +117,48 @@
       </div>
     </section>
 
+    <section class="page" id="quadras" aria-labelledby="courts-title">
+      <div class="page-head-row"><div><p class="eyebrow">JOGUE PERTO DE VOCÊ</p><h1 class="page-title" id="courts-title">Quadras</h1><p class="page-lead" id="location-label">Usando Fortaleza como localização inicial.</p></div><button class="locate-button" id="locate-me">⌖ Usar minha localização</button></div>
+      <div class="court-layout">
+        <div class="map-sim" aria-label="Mapa demonstrativo de quadras próximas"><div class="map-grid"></div><span class="map-user" title="Você">●</span><button class="map-pin active" style="left:62%;top:30%" data-court="0">🏀<b>1</b></button><button class="map-pin" style="left:34%;top:62%" data-court="1">🏀<b>2</b></button><button class="map-pin" style="left:76%;top:72%" data-court="2">🏀<b>3</b></button><div class="map-distance">Raio de busca: <strong>8 km</strong></div></div>
+        <div class="court-results"><div class="result-toolbar"><strong><span id="court-count">3</span> quadras encontradas</strong><select id="court-filter"><option value="distance">Mais próximas</option><option value="activity">Mais jogadores</option><option value="lighting">Com iluminação</option></select></div><div id="court-list"></div></div>
+      </div>
+      <section class="team-builder"><div class="team-builder-head"><div><p class="eyebrow">FORMAÇÃO INTELIGENTE</p><h2>Monte times equilibrados</h2><p>Cruzamos nível técnico, altura, gênero e disponibilidade. O ranking semestral não interfere no equilíbrio da partida.</p></div><button class="primary-cta" id="build-teams">Simular times <span>↗</span></button></div><div class="availability"><span>Disponibilidade em comum</span><button class="active">Terça • 19h</button><button>Quinta • 20h</button><button>Sábado • 16h</button></div><div class="team-output" id="team-output"><div class="empty-teams"><span>◎</span><p>Selecione um horário e simule o cruzamento de 10 perfis.</p></div></div></section>
+    </section>
+
+    <section class="page" id="treinos" aria-labelledby="training-title">
+      <div class="training-hero"><div><p class="eyebrow">EVOLUA TODO DIA</p><h1 class="page-title" id="training-title">Meus treinos</h1><p>Treine onde estiver, mantenha sua sequência e chegue mais preparado para jogar em grupo.</p></div><div class="level-ring"><span><small>NÍVEL</small><strong id="player-level">12</strong></span></div><div class="xp-block"><span><strong id="xp-value">760</strong> / 1.000 XP</span><div><i id="xp-bar"></i></div><small>240 XP para o nível 13</small></div></div>
+      <div class="training-summary"><span><strong id="streak-value">🔥 6 dias</strong><small>Sequência atual</small></span><span><strong>4 / 5</strong><small>Meta semanal</small></span><span><strong>+86</strong><small>Pontos semestrais</small></span><span class="group-boost"><strong>2× pontos</strong><small>Em treino coletivo</small></span></div>
+      <div class="section-heading training-heading"><div><p class="eyebrow">PLANO DE HOJE</p><h2>Treinos individuais</h2></div><div class="filter-chips"><button class="active">Todos</button><button>Em casa</button><button>Na quadra</button></div></div>
+      <div class="workout-grid" id="workout-grid">
+        <article class="workout-card" data-xp="40"><div class="workout-icon">◌</div><span class="workout-place">EM CASA</span><h3>Controle de bola</h3><p>5 séries de dribles alternados, baixo e cruzado.</p><div><span>◷ 12 min</span><strong>+40 XP</strong></div><button class="start-workout">Iniciar treino</button></article>
+        <article class="workout-card" data-xp="60"><div class="workout-icon">↗</div><span class="workout-place">QUALQUER LUGAR</span><h3>Explosão e agilidade</h3><p>Circuito curto para velocidade lateral e arranque.</p><div><span>◷ 18 min</span><strong>+60 XP</strong></div><button class="start-workout">Iniciar treino</button></article>
+        <article class="workout-card featured-workout" data-xp="90"><div class="workout-icon">◎</div><span class="workout-place">NA QUADRA</span><h3>Finalizações</h3><p>Bandejas com as duas mãos e arremessos de curta distância.</p><div><span>◷ 25 min</span><strong>+90 XP</strong></div><button class="start-workout">Iniciar treino</button></article>
+      </div>
+      <div class="group-callout"><span>👥</span><div><p class="eyebrow">PROGRESSÃO COMUNITÁRIA</p><h2>Treinar junto leva você mais longe</h2><p>Treinos em grupo encontrados pelas Quadras geram XP e o dobro de pontos para o ranking semestral.</p></div><button class="secondary-button" data-page="quadras">Encontrar grupo</button></div>
+    </section>
+
+    <section class="page" id="chat" aria-labelledby="chat-title">
+      <p class="eyebrow">ORGANIZE O JOGO</p><h1 class="page-title" id="chat-title">Mensagens</h1>
+      <div class="chat-shell"><aside class="chat-list"><div class="chat-search">⌕ <input placeholder="Buscar conversa"></div><button class="chat-person active" data-chat="racha"><span class="mini-avatar">RB</span><span><strong>Racha da Beira-Mar</strong><small>Rafael: Fechado então! 🏀</small></span><i>2</i></button><button class="chat-person" data-chat="mari"><span class="mini-avatar">MC</span><span><strong>Mariana Costa</strong><small>Vamos treinar quinta?</small></span></button><button class="chat-person" data-chat="pedro"><span class="mini-avatar">PS</span><span><strong>Pedro Silva</strong><small>Você: valeu pelo jogo!</small></span></button></aside><section class="chat-panel"><header><span class="mini-avatar">RB</span><span><strong id="chat-name">Racha da Beira-Mar</strong><small><i></i> 6 membros online</small></span></header><div class="messages" id="messages"><div class="date-divider">Hoje</div><div class="bubble bot"><b>Rafael</b>Galera, treino confirmado hoje às 19:30?<small>17:42</small></div><div class="bubble user">Por mim fechado! Quem leva a bola?<small>17:44</small></div><div class="bubble bot"><b>Mariana</b>Eu levo. Encontro vocês na entrada da quadra 🙌<small>17:45</small></div></div><form class="chat-compose" id="chat-form"><button type="button" aria-label="Anexar">＋</button><input id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off"><button type="submit" aria-label="Enviar">➤</button></form></section></div>
+    </section>
+
     <section class="page" id="perfil" aria-labelledby="profile-title">
-      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p>⌖ Fortaleza, CE • Ala-armador • 1,82 m</p><div class="tags"><span>Intermediário</span><span>Membro desde 2026</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
-      <div class="profile-grid"><div class="stat-panel"><span><small>ELO ATUAL</small><strong>1.240</strong></span><span><small>RANKING LOCAL</small><strong>#8</strong></span><span><small>PARTIDAS</small><strong>18</strong></span><span><small>VITÓRIAS</small><strong>11</strong></span></div><div class="history-panel"><p class="eyebrow">ÚLTIMOS JOGOS</p><h2>Seu desempenho</h2><div class="results"><i class="win">V</i><i class="win">V</i><i class="loss">D</i><i class="win">V</i><i class="loss">D</i></div><p><strong>+34 Elo</strong> nos últimos 5 jogos</p></div></div>
+      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p>⌖ Fortaleza, CE • Homem • Ala-armador • 1,82 m</p><div class="tags"><span>Intermediário</span><span>Disponível: ter, qui e sáb</span><span>Nível 12</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
+      <div class="profile-grid"><div class="stat-panel"><span><small>PONTOS SEMESTRAIS</small><strong>1.240</strong></span><span><small>RANKING LOCAL</small><strong>#8</strong></span><span><small>PARTIDAS</small><strong>18</strong></span><span><small>TREINOS</small><strong>24</strong></span></div><div class="history-panel"><p class="eyebrow">ÚLTIMOS TREINOS</p><h2>Sua consistência</h2><div class="results"><i class="win">✓</i><i class="win">✓</i><i class="loss">—</i><i class="win">✓</i><i class="win">✓</i></div><p><strong>+86 pontos</strong> nesta semana</p></div></div>
       <button class="logout-button" id="logout-button">Sair da conta</button>
     </section>
   </main>
 
   <nav class="bottom-nav" aria-label="Navegação principal">
-    <button class="active" data-page="inicio"><span>⌂</span>Início</button><button data-page="partidas"><span>◉</span>Partidas</button><button class="play-nav" id="nav-match" aria-label="Buscar partida"><span>🏀</span></button><button data-page="ranking"><span>♜</span>Ranking</button><button data-page="perfil"><span>♙</span>Perfil</button>
+    <button class="active" data-page="inicio"><span>⌂</span>Início</button><button data-page="quadras"><span>⌖</span>Quadras</button><button class="play-nav" id="nav-match" aria-label="Buscar partida"><span>🏀</span></button><button data-page="treinos"><span>ϟ</span>Treinos</button><button data-page="chat"><span>◌</span>Chat</button>
   </nav>
 
   <div class="match-overlay" id="match-overlay" aria-hidden="true">
     <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
       <button class="close-modal" id="close-modal" aria-label="Fechar">×</button>
-      <div class="searching-state" id="searching-state"><div class="radar"><span>🏀</span><i></i><i></i><i></i></div><p class="eyebrow">MATCHMAKING ATIVO</p><h2 id="search-title">Procurando jogadores...</h2><p>Buscando atletas com Elo próximo de <strong>1.240</strong> em um raio de 8 km.</p><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong>4/10</strong><small>jogadores</small></span></div><button class="secondary-button" id="cancel-search">Cancelar busca</button></div>
-      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p>Hoje, 19:30 • Quadra da Beira-Mar</p><div class="team-balance"><div><small>TIME A</small><strong>1.238</strong><span>Elo médio</span></div><b>VS</b><div><small>TIME B</small><strong>1.244</strong><span>Elo médio</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button><small class="deadline">Confirme em até 45 segundos</small></div>
+      <div class="searching-state" id="searching-state"><div class="radar"><span>🏀</span><i></i><i></i><i></i></div><p class="eyebrow">MATCHMAKING ATIVO</p><h2 id="search-title">Cruzando perfis...</h2><p>Buscando atletas compatíveis por <strong>nível, altura e disponibilidade</strong> em um raio de 8 km.</p><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong>4/10</strong><small>jogadores</small></span></div><button class="secondary-button" id="cancel-search">Cancelar busca</button></div>
+      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p>Hoje, 19:30 • Quadra da Beira-Mar</p><div class="team-balance"><div><small>TIME A</small><strong>77</strong><span>Nível médio</span></div><b>VS</b><div><small>TIME B</small><strong>78</strong><span>Nível médio</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button><small class="deadline">Confirme em até 45 segundos</small></div>
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
