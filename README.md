@@ -21,11 +21,11 @@ Não é necessário instalar dependências. O protótipo usa HTML, CSS e JavaScr
 - Conclua treinos individuais, acumule XP e mantenha uma sequência semanal.
 - Converse em um chat demonstrativo com respostas automáticas.
 
-Os dados são demonstrativos e ficam no navegador. A próxima etapa arquitetural recomendada é conectar autenticação e banco de dados (por exemplo, Supabase/PostgreSQL) mantendo esta interface como cliente.
+Os dados agora são gravados pelo servidor local em `data/db.json`. Esse arquivo é ignorado pelo Git e criado automaticamente.
 
 ## Autenticação
 
-O login e o cadastro são funcionais como protótipo e mantêm a sessão no navegador. Ainda não armazenam usuários reais nem senhas. Para produção, conecte o formulário a um provedor seguro de autenticação, como Supabase Auth.
+O login e o cadastro usam uma API real, hash de senha com `scrypt` e tokens de sessão. A implementação é adequada para uma demonstração acadêmica em rede local; produção ainda exige HTTPS, banco gerenciado, expiração de sessões e recuperação de senha.
 
 ## Regras de progressão do MVP
 
@@ -36,6 +36,10 @@ O login e o cadastro são funcionais como protótipo e mantêm a sessão no nave
 
 As quadras e perfis são dados demonstrativos. A localização real é solicitada pelo navegador, mas um produto em produção deve consultar uma base geográfica, como OpenStreetMap/Overpass ou Google Places, e calcular distâncias no backend.
 
+## Demonstração com o grupo
+
+Execute `npm run demo:prepare` para restaurar as quatro contas da equipe e consulte `DEMONSTRACAO.md` para o roteiro completo. Depois, execute `npm run dev` e compartilhe com os celulares o endereço de rede exibido no terminal.
+
 ## Deploy
 
-O workflow em `.github/workflows/deploy.yml` publica automaticamente o site no GitHub Pages a cada push na branch `main`.
+GitHub Pages não executa o backend Node.js e, portanto, não é mais adequado para esta versão. Um deploy público deve hospedar o servidor em Render, Railway ou Fly.io e substituir o arquivo JSON por PostgreSQL/Supabase. Para a apresentação presencial, a execução em rede local reduz dependência da internet e demonstra comunicação real entre dispositivos.
