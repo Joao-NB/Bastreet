@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="description" content="BASTREET — encontre partidas de basquete equilibradas perto de você.">
+  <title>BASTREET — Encontre. Jogue. Evolua.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <section class="auth-screen" id="auth-screen" aria-label="Acesso ao BASTREET">
+    <div class="auth-visual">
+      <a class="brand auth-brand" href="#"><span class="brand-ball">●</span><span>BA<span>STREET</span></span></a>
+      <div class="auth-pitch"><p class="eyebrow">ENCONTRE. JOGUE. EVOLUA.</p><h1>A quadra<br><span>te espera.</span></h1><p>Partidas equilibradas, gente do seu nível e evolução a cada jogo.</p><div class="auth-proof"><span><strong>2.4k</strong><small>jogadores</small></span><span><strong>380+</strong><small>partidas</small></span><span><strong>12</strong><small>quadras</small></span></div></div>
+      <div class="auth-ball" aria-hidden="true">🏀</div>
+    </div>
+    <div class="auth-panel"><div class="auth-box">
+      <button class="auth-back" id="auth-back" hidden aria-label="Voltar">←</button>
+      <div class="auth-intro"><p class="eyebrow">BEM-VINDO À QUADRA</p><h2>Entre no jogo</h2><p>Acesse sua conta ou crie seu perfil de atleta.</p></div>
+      <div class="auth-tabs"><button class="active" data-auth-tab="login">Entrar</button><button data-auth-tab="register">Criar conta</button></div>
+      <form class="auth-form active" id="login-form" novalidate>
+        <label>E-mail<input type="email" name="email" placeholder="voce@email.com" autocomplete="email" required><span class="field-error">Informe um e-mail válido.</span></label>
+        <label>Senha<button type="button" class="forgot" data-toast="Enviaremos as instruções para seu e-mail">Esqueci minha senha</button><div class="password-field"><input type="password" name="password" placeholder="Sua senha" autocomplete="current-password" minlength="6" required><button type="button" class="toggle-password" aria-label="Exibir senha">◉</button></div><span class="field-error">Use pelo menos 6 caracteres.</span></label>
+        <label class="check-label"><input type="checkbox"><span>Manter conectado</span></label>
+        <button class="primary-cta auth-submit" type="submit">Entrar na quadra <span>→</span></button><p class="demo-hint">Demonstração: use qualquer e-mail e senha com 6 caracteres.</p>
+      </form>
+      <form class="auth-form" id="register-form" novalidate>
+        <div class="register-progress"><i class="active"></i><i></i><span>Etapa <b id="step-number">1</b> de 2</span></div>
+        <div class="register-step active" data-step="1">
+          <label>Nome completo<input name="name" placeholder="Como podemos chamar você?" required><span class="field-error">Informe seu nome.</span></label>
+          <div class="field-pair"><label>Idade<input type="number" name="age" placeholder="18" min="16" max="80" required><span class="field-error">Idade mínima: 16 anos.</span></label><label>Altura (cm)<input type="number" name="height" placeholder="182" min="130" max="230" required><span class="field-error">Informe sua altura.</span></label></div>
+          <label>Localização<input name="location" placeholder="Fortaleza, CE" required><span class="field-error">Informe sua cidade.</span></label><button class="primary-cta auth-submit" type="button" id="next-register">Continuar <span>→</span></button>
+        </div>
+        <div class="register-step" data-step="2">
+          <div class="field-pair"><label>Posição<select name="position" required><option value="">Selecione</option><option>Armador</option><option>Ala-armador</option><option>Ala</option><option>Ala-pivô</option><option>Pivô</option></select><span class="field-error">Escolha sua posição.</span></label><label>Nível<select name="level" required><option value="">Selecione</option><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select><span class="field-error">Escolha seu nível.</span></label></div>
+          <label>E-mail<input type="email" name="email" placeholder="voce@email.com" required><span class="field-error">Informe um e-mail válido.</span></label>
+          <label>Crie uma senha<div class="password-field"><input type="password" name="password" placeholder="Mínimo de 6 caracteres" minlength="6" required><button type="button" class="toggle-password">◉</button></div><span class="field-error">Use pelo menos 6 caracteres.</span></label>
+          <label class="check-label"><input type="checkbox" required><span>Li e aceito os termos de uso e privacidade.</span></label><button class="primary-cta auth-submit" type="submit">Criar meu perfil <span>→</span></button>
+        </div>
+      </form>
+    </div></div>
+  </section>
+  <header class="topbar">
+    <a class="brand" id="brand-home" href="#inicio" aria-label="BASTREET, página inicial">
+      <span class="brand-ball" aria-hidden="true">●</span><span>BA<span>STREET</span></span>
+    </a>
+    <div class="top-actions">
+      <button class="icon-button" aria-label="Mensagens" data-toast="Você não tem novas mensagens">⌁<span class="notification-dot"></span></button>
+      <button class="avatar-button" data-page="perfil" aria-label="Abrir perfil"><span>JG</span></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page active" id="inicio" aria-labelledby="welcome-title">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">FORTALEZA • CE</p>
+          <h1 id="welcome-title">E aí, <span>João!</span><br>Pronto pro jogo?</h1>
+          <p class="hero-subtitle">Encontre sua próxima partida, jogue com pessoas do seu nível e suba no ranking.</p>
+          <button class="primary-cta" id="find-match"><span>Buscar partida</span><span class="arrow">↗</span></button>
+          <div class="online"><i></i><strong>27 jogadores</strong> buscando agora perto de você</div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="court-lines"></div><div class="big-ball">🏀</div><span class="scribble">BORA!</span>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div>
+          <div class="section-heading"><div><p class="eyebrow">ESCOLHA SEU RITMO</p><h2>Modos de jogo</h2></div></div>
+          <div class="mode-grid">
+            <button class="mode-card selected" data-mode="normal"><span class="mode-icon">◎</span><span><strong>Partida normal</strong><small>Equilibrada pelo seu Elo</small></span><em>Recomendado</em></button>
+            <button class="mode-card" data-mode="rapida"><span class="mode-icon">ϟ</span><span><strong>Partida rápida</strong><small>Entre em quadra mais rápido</small></span></button>
+            <button class="mode-card" data-mode="personalizada"><span class="mode-icon">♙</span><span><strong>Personalizada</strong><small>Crie e convide seus amigos</small></span></button>
+          </div>
+        </div>
+
+        <aside class="elo-card">
+          <div class="elo-top"><span class="rank-badge">IV</span><span><small>SEU ELO</small><strong>1.240</strong></span><span class="trend">↗ 34</span></div>
+          <div class="progress-label"><span>Bronze IV</span><span>60% para Bronze III</span></div>
+          <div class="progress"><i></i></div>
+          <div class="elo-stats"><span><strong>18</strong><small>Partidas</small></span><span><strong>11</strong><small>Vitórias</small></span><span><strong>61%</strong><small>Aproveitamento</small></span></div>
+        </aside>
+      </div>
+
+      <section class="nearby">
+        <div class="section-heading"><div><p class="eyebrow">NA SUA REGIÃO</p><h2>Próximas partidas</h2></div><button class="text-button" data-page="partidas">Ver todas →</button></div>
+        <div class="match-list">
+          <article class="match-card"><div class="date-block"><strong>HOJE</strong><span>19:30</span></div><div class="match-info"><h3>Basquete na Beira-Mar</h3><p>⌖ Quadra da Beira-Mar • 2,4 km</p><div class="tags"><span>Normal</span><span>Elo 1.150–1.350</span></div></div><div class="players"><div class="avatar-stack"><i>R</i><i>M</i><i>L</i><i>+3</i></div><span><strong>6/10</strong><small>jogadores</small></span></div><button class="join-button" data-toast="Você entrou na partida da Beira-Mar!">Entrar</button></article>
+          <article class="match-card"><div class="date-block"><strong>AMANHÃ</strong><span>18:00</span></div><div class="match-info"><h3>Racha do Benfica</h3><p>⌖ Praça da Gentilândia • 4,1 km</p><div class="tags"><span>Rápida</span><span>Todos os níveis</span></div></div><div class="players"><div class="avatar-stack"><i>A</i><i>B</i><i>+5</i></div><span><strong>7/10</strong><small>jogadores</small></span></div><button class="join-button" data-toast="Você entrou no Racha do Benfica!">Entrar</button></article>
+        </div>
+      </section>
+    </section>
+
+    <section class="page" id="partidas" aria-labelledby="matches-title">
+      <p class="eyebrow">SUA JORNADA</p><h1 class="page-title" id="matches-title">Partidas</h1>
+      <div class="tabs"><button class="active">Próximas</button><button>Histórico</button><button>Convites <b>2</b></button></div>
+      <div class="featured-match"><div><span class="status-pill">CONFIRMADA</span><p>Hoje • 19:30</p><h2>Basquete na Beira-Mar</h2><p>⌖ Quadra da Beira-Mar, Meireles</p></div><div class="versus"><span>TIME A</span><strong>VS</strong><span>TIME B</span></div><button class="primary-cta compact" data-toast="Abrindo detalhes da partida...">Ver partida <span>→</span></button></div>
+    </section>
+
+    <section class="page" id="ranking" aria-labelledby="ranking-title">
+      <p class="eyebrow">QUEM MANDA NA QUADRA</p><h1 class="page-title" id="ranking-title">Ranking</h1>
+      <div class="filter-chips"><button class="active">Minha cidade</button><button>Geral</button><button>Amigos</button></div>
+      <div class="podium"><div class="podium-player second"><div class="photo">PD</div><strong>Pedro</strong><span>1.487</span><i>2</i></div><div class="podium-player first"><div class="crown">♛</div><div class="photo">JP</div><strong>João P.</strong><span>1.520</span><i>1</i></div><div class="podium-player third"><div class="photo">RF</div><strong>Rafael</strong><span>1.452</span><i>3</i></div></div>
+      <div class="ranking-list">
+        <div class="rank-row current"><b>8</b><span class="mini-avatar">JG</span><span><strong>João Guilherme</strong><small>Ala-armador • Você</small></span><em>1.240 ELO</em><i>↗ 2</i></div>
+        <div class="rank-row"><b>4</b><span class="mini-avatar">LS</span><span><strong>Lucas Santos</strong><small>Pivô</small></span><em>1.410 ELO</em><i>—</i></div>
+        <div class="rank-row"><b>5</b><span class="mini-avatar">BM</span><span><strong>Bruno Melo</strong><small>Armador</small></span><em>1.398 ELO</em><i>↗ 1</i></div>
+        <div class="rank-row"><b>6</b><span class="mini-avatar">CA</span><span><strong>Caio Alves</strong><small>Ala</small></span><em>1.355 ELO</em><i>↘ 1</i></div>
+      </div>
+    </section>
+
+    <section class="page" id="perfil" aria-labelledby="profile-title">
+      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p>⌖ Fortaleza, CE • Ala-armador • 1,82 m</p><div class="tags"><span>Intermediário</span><span>Membro desde 2026</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
+      <div class="profile-grid"><div class="stat-panel"><span><small>ELO ATUAL</small><strong>1.240</strong></span><span><small>RANKING LOCAL</small><strong>#8</strong></span><span><small>PARTIDAS</small><strong>18</strong></span><span><small>VITÓRIAS</small><strong>11</strong></span></div><div class="history-panel"><p class="eyebrow">ÚLTIMOS JOGOS</p><h2>Seu desempenho</h2><div class="results"><i class="win">V</i><i class="win">V</i><i class="loss">D</i><i class="win">V</i><i class="loss">D</i></div><p><strong>+34 Elo</strong> nos últimos 5 jogos</p></div></div>
+      <button class="logout-button" id="logout-button">Sair da conta</button>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <button class="active" data-page="inicio"><span>⌂</span>Início</button><button data-page="partidas"><span>◉</span>Partidas</button><button class="play-nav" id="nav-match" aria-label="Buscar partida"><span>🏀</span></button><button data-page="ranking"><span>♜</span>Ranking</button><button data-page="perfil"><span>♙</span>Perfil</button>
+  </nav>
+
+  <div class="match-overlay" id="match-overlay" aria-hidden="true">
+    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
+      <button class="close-modal" id="close-modal" aria-label="Fechar">×</button>
+      <div class="searching-state" id="searching-state"><div class="radar"><span>🏀</span><i></i><i></i><i></i></div><p class="eyebrow">MATCHMAKING ATIVO</p><h2 id="search-title">Procurando jogadores...</h2><p>Buscando atletas com Elo próximo de <strong>1.240</strong> em um raio de 8 km.</p><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong>4/10</strong><small>jogadores</small></span></div><button class="secondary-button" id="cancel-search">Cancelar busca</button></div>
+      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p>Hoje, 19:30 • Quadra da Beira-Mar</p><div class="team-balance"><div><small>TIME A</small><strong>1.238</strong><span>Elo médio</span></div><b>VS</b><div><small>TIME B</small><strong>1.244</strong><span>Elo médio</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button><small class="deadline">Confirme em até 45 segundos</small></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
