@@ -132,18 +132,31 @@ document.querySelectorAll('.filter-chips button, .tabs button').forEach(button =
 }));
 
 let courts = [];
+let userLocation = {lat:-3.7319,lon:-38.5267};
+const courtsMap = L.map('courts-map',{zoomControl:false}).setView([userLocation.lat,userLocation.lon],13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(courtsMap);
+L.control.zoom({position:'topright'}).addTo(courtsMap);
+const courtMarkers=L.layerGroup().addTo(courtsMap);let userMarker;
+
+function updateMap(){
+  courtMarkers.clearLayers();const bounds=[];
+  if(userMarker)userMarker.remove();userMarker=L.circleMarker([userLocation.lat,userLocation.lon],{radius:8,color:'#fff',weight:3,fillColor:'#2477ff',fillOpacity:1}).addTo(courtsMap).bindPopup('<strong>Você está aqui</strong>');bounds.push([userLocation.lat,userLocation.lon]);
+  courts.forEach(court=>{const icon=L.divIcon({className:'court-leaflet-icon',html:`<span>🏀</span>${court.source==='verified'?'<i>✓</i>':''}`,iconSize:[42,42],iconAnchor:[21,42]});L.marker([court.lat,court.lon],{icon}).addTo(courtMarkers).bindPopup(`<strong>${escapeHtml(court.name)}</strong><br><small>${court.distance.toFixed(1)} km • ${court.source==='verified'?'Verificada':'OpenStreetMap'}</small>`);bounds.push([court.lat,court.lon])});
+  if(bounds.length>1)courtsMap.fitBounds(bounds,{padding:[35,35],maxZoom:14});setTimeout(()=>courtsMap.invalidateSize(),80);
+}
 
 function renderCourts(sort = 'distance') {
-  const list = [...courts].sort((a, b) => sort === 'activity' ? b.players - a.players : sort === 'lighting' ? Number(b.light) - Number(a.light) : a.distance - b.distance);
-  document.querySelector('#court-list').innerHTML = list.map((court, index) => `<article class="court-card ${index === 0 ? 'selected' : ''}"><div class="court-photo"><span>🏀</span><i>${court.players} presente${court.players===1?'':'s'}</i></div><div class="court-copy"><small>${court.distance.toFixed(1).replace('.', ',')} KM • ${court.area.toUpperCase()}</small><h3>${court.name}</h3><p>${court.surface} • ${court.light ? 'Com iluminação' : 'Sem iluminação'} • Aberta até ${court.open}</p><div><button class="court-route" data-court-name="${court.name}">Ver rota</button><button class="court-checkin" data-court-id="${court.id}">Estou aqui</button><button class="court-group" data-page="chat">Grupo</button></div></div></article>`).join('');
-  document.querySelectorAll('.court-route').forEach(button => button.addEventListener('click', () => showToast(`Rota para ${button.dataset.courtName} calculada.`)));
+  const filtered=sort==='verified'?courts.filter(court=>court.source==='verified'):[...courts];const list = filtered.sort((a, b) => sort === 'activity' ? b.players - a.players : sort === 'lighting' ? Number(b.light) - Number(a.light) : a.distance - b.distance);
+  document.querySelector('#court-list').innerHTML = list.map((court, index) => `<article class="court-card ${index === 0 ? 'selected' : ''}"><div class="court-photo"><span>🏀</span><i>${court.players} presente${court.players===1?'':'s'}</i></div><div class="court-copy"><small>${court.distance.toFixed(1).replace('.', ',')} KM • ${escapeHtml(court.area).toUpperCase()}</small><h3>${escapeHtml(court.name)}</h3><span class="source-badge ${court.source}">${court.source==='verified'?'✓ Verificada pela equipe':'OpenStreetMap'}</span><p>${escapeHtml(court.surface)} • ${court.light ? 'Com iluminação' : 'Iluminação não confirmada'} • ${escapeHtml(court.open)}</p><div><button class="court-route" data-lat="${court.lat}" data-lon="${court.lon}" data-court-name="${escapeHtml(court.name)}">Como chegar</button><button class="court-checkin" data-court-id="${court.id}">Estou aqui</button><button class="court-group" data-page="chat">Grupo</button></div></div></article>`).join('')||'<div class="empty-teams"><p>Nenhuma quadra neste filtro.</p></div>';
+  document.querySelectorAll('.court-route').forEach(button => button.addEventListener('click', () => window.open(`https://www.google.com/maps/dir/?api=1&destination=${button.dataset.lat},${button.dataset.lon}`,'_blank','noopener')));
   document.querySelectorAll('.court-group').forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
   document.querySelectorAll('.court-checkin').forEach(button => button.addEventListener('click', async()=>{try{await api(`/api/courts/${button.dataset.courtId}/checkin`,{method:'POST'});showToast('Presença registrada por 4 horas.');await loadCourts()}catch(error){showToast(error.message)}}));
 }
 
-async function loadCourts(lat=-3.7319,lon=-38.5267){try{const result=await api(`/api/courts?lat=${lat}&lon=${lon}`);courts=result.courts;document.querySelector('#court-count').textContent=courts.length;renderCourts(document.querySelector('#court-filter').value)}catch(error){showToast(error.message)}}
+async function loadCourts(lat=userLocation.lat,lon=userLocation.lon,refresh=false){try{document.querySelector('#map-source').textContent='Consultando quadras...';const result=await api(`/api/courts?lat=${lat}&lon=${lon}${refresh?'&refresh=1':''}`);userLocation={lat,lon};courts=result.courts;document.querySelector('#court-count').textContent=courts.length;document.querySelector('#map-source').textContent=result.meta.stale?'Modo offline • cache + base verificada':result.meta.cache?`Cache local • ${result.meta.osmResults} do OpenStreetMap`:`Atualizado agora • ${result.meta.osmResults} do OpenStreetMap`;renderCourts(document.querySelector('#court-filter').value);updateMap()}catch(error){document.querySelector('#map-source').textContent='Base verificada';showToast(error.message)}}
 loadCourts();
 document.querySelector('#court-filter').addEventListener('change', event => renderCourts(event.target.value));
+document.querySelector('#refresh-courts').addEventListener('click',()=>loadCourts(userLocation.lat,userLocation.lon,true));
 document.querySelector('#locate-me').addEventListener('click', () => {
   const button = document.querySelector('#locate-me'); button.textContent = '⌛ Localizando...';
   if (!navigator.geolocation) { document.querySelector('#location-label').textContent = 'Geolocalização indisponível. Exibindo Fortaleza, CE.'; button.textContent = '⌖ Usar minha localização'; return; }

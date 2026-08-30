@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -120,8 +121,8 @@
     <section class="page" id="quadras" aria-labelledby="courts-title">
       <div class="page-head-row"><div><p class="eyebrow">JOGUE PERTO DE VOCÊ</p><h1 class="page-title" id="courts-title">Quadras</h1><p class="page-lead" id="location-label">Usando Fortaleza como localização inicial.</p></div><button class="locate-button" id="locate-me">⌖ Usar minha localização</button></div>
       <div class="court-layout">
-        <div class="map-sim" aria-label="Mapa demonstrativo de quadras próximas"><div class="map-grid"></div><span class="map-user" title="Você">●</span><button class="map-pin active" style="left:62%;top:30%" data-court="0">🏀<b>1</b></button><button class="map-pin" style="left:34%;top:62%" data-court="1">🏀<b>2</b></button><button class="map-pin" style="left:76%;top:72%" data-court="2">🏀<b>3</b></button><div class="map-distance">Raio de busca: <strong>8 km</strong></div></div>
-        <div class="court-results"><div class="result-toolbar"><strong><span id="court-count">3</span> quadras encontradas</strong><select id="court-filter"><option value="distance">Mais próximas</option><option value="activity">Mais jogadores</option><option value="lighting">Com iluminação</option></select></div><div id="court-list"></div></div>
+        <div class="map-sim" aria-label="Mapa real de quadras próximas"><div id="courts-map"></div><div class="map-distance">Raio de busca: <strong>8 km</strong><small id="map-source">Base verificada + OpenStreetMap</small></div></div>
+        <div class="court-results"><div class="result-toolbar"><strong><span id="court-count">3</span> quadras encontradas</strong><div><button id="refresh-courts" title="Atualizar OpenStreetMap">↻</button><select id="court-filter"><option value="distance">Mais próximas</option><option value="activity">Mais jogadores</option><option value="lighting">Com iluminação</option><option value="verified">Verificadas</option></select></div></div><div id="court-list"></div></div>
       </div>
       <section class="team-builder"><div class="team-builder-head"><div><p class="eyebrow">FORMAÇÃO INTELIGENTE</p><h2>Monte times equilibrados</h2><p>Cruzamos nível técnico, altura, gênero e disponibilidade. O ranking semestral não interfere no equilíbrio da partida.</p></div><button class="primary-cta" id="build-teams">Simular times <span>↗</span></button></div><div class="availability"><span>Disponibilidade em comum</span><button class="active">Terça • 19h</button><button>Quinta • 20h</button><button>Sábado • 16h</button></div><div class="team-output" id="team-output"><div class="empty-teams"><span>◎</span><p>Selecione um horário e simule o cruzamento de 10 perfis.</p></div></div></section>
     </section>
@@ -162,6 +163,7 @@
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="node_modules/leaflet/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

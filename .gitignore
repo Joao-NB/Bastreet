@@ -4,3 +4,4 @@ Thumbs.db
 *.log
 data/db.json
 data/db.json.tmp
+data/courts-cache.json

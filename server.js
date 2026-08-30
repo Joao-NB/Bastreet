@@ -7,11 +7,12 @@ const port = Number(process.env.PORT) || 4173;
 const root = __dirname;
 const dataDir = path.join(root, 'data');
 const dbFile = path.join(dataDir, 'db.json');
+const courtsCacheFile = path.join(dataDir, 'courts-cache.json');
 const types = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8' };
 const courts = [
-  {id:'beira-mar',name:'Quadra da Beira-Mar',area:'Meireles',lat:-3.7246,lon:-38.4854,light:true,surface:'Piso esportivo',open:'22h'},
-  {id:'gentilandia',name:'Praça da Gentilândia',area:'Benfica',lat:-3.7445,lon:-38.5372,light:true,surface:'Concreto',open:'24h'},
-  {id:'papicu',name:'Areninha do Papicu',area:'Papicu',lat:-3.7394,lon:-38.4565,light:false,surface:'Piso esportivo',open:'20h'}
+  {id:'beira-mar',name:'Quadra da Beira-Mar',area:'Meireles',lat:-3.7246,lon:-38.4854,light:true,surface:'Piso esportivo',open:'22h',source:'verified'},
+  {id:'gentilandia',name:'Praça da Gentilândia',area:'Benfica',lat:-3.7445,lon:-38.5372,light:true,surface:'Concreto',open:'24h',source:'verified'},
+  {id:'papicu',name:'Areninha do Papicu',area:'Papicu',lat:-3.7394,lon:-38.4565,light:false,surface:'Piso esportivo',open:'20h',source:'verified'}
 ];
 function initialDb(){return {users:[],sessions:[],trainings:[],checkins:[],messages:[{id:crypto.randomUUID(),userId:'bot',userName:'Rafael (bot)',text:'Bem-vindos ao grupo! Quem topa um treino hoje às 19h?',createdAt:new Date().toISOString()}],queue:[],matches:[]}}
 function readDb(){if(!fs.existsSync(dataDir))fs.mkdirSync(dataDir,{recursive:true});if(!fs.existsSync(dbFile))fs.writeFileSync(dbFile,JSON.stringify(initialDb(),null,2));return JSON.parse(fs.readFileSync(dbFile,'utf8'))}
@@ -24,6 +25,18 @@ function currentUser(req,db){const token=(req.headers.authorization||'').replace
 function requireUser(req,res,db){const user=currentUser(req,db);if(!user)json(res,401,{error:'Faça login para continuar.'});return user}
 function km(a,b,c,d){const r=v=>v*Math.PI/180;const x=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
 function balance(players){const sorted=[...players].sort((a,b)=>b.skill-a.skill),teams=[[],[]],totals=[0,0];sorted.forEach(player=>{const target=totals[0]<=totals[1]?0:1;teams[target].push(safe(player));totals[target]+=player.skill});return teams}
+function readCourtCache(){try{return JSON.parse(fs.readFileSync(courtsCacheFile,'utf8'))}catch{return null}}
+async function searchOsmCourts(lat,lon,force=false){
+  const cache=readCourtCache(),fresh=cache&&Date.now()-new Date(cache.updatedAt).getTime()<86400000;
+  if(cache&&fresh&&!force)return {...cache,cache:true};
+  const query=`[out:json][timeout:20];(nwr(around:8000,${lat},${lon})["sport"="basketball"]["leisure"~"pitch|practice_pitch|sports_centre|sports_hall"];);out center tags;`;
+  try{
+    const response=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'BASTREET-Academic-MVP/1.0'},body:`data=${encodeURIComponent(query)}`,signal:AbortSignal.timeout(22000)});
+    if(!response.ok)throw new Error(`Overpass ${response.status}`);const data=await response.json();
+    const results=data.elements.map(item=>{const tags=item.tags||{},point=item.center||item;return {id:`osm-${item.type}-${item.id}`,name:tags.name||'Quadra de basquete',area:tags['addr:suburb']||tags['addr:neighbourhood']||'Região próxima',lat:point.lat,lon:point.lon,light:tags.lit==='yes',surface:tags.surface||'Não informada',open:tags.opening_hours||'Não informado',access:tags.access||'yes',hoops:tags.hoops||null,source:'osm'}}).filter(item=>Number.isFinite(item.lat)&&Number.isFinite(item.lon));
+    const value={updatedAt:new Date().toISOString(),center:{lat,lon},results};fs.writeFileSync(courtsCacheFile,JSON.stringify(value,null,2));return {...value,cache:false};
+  }catch(error){console.error('Falha no Overpass:',error.message);if(cache)return {...cache,cache:true,stale:true};return {updatedAt:null,results:[],cache:true,stale:true}}
+}
 
 async function api(req,res,url){
   const db=readDb(),method=req.method;
@@ -42,7 +55,8 @@ async function api(req,res,url){
   if(method==='GET'&&url.pathname==='/api/me'){const user=requireUser(req,res,db);if(user)return json(res,200,{user:safe(user)});return}
   if(method==='GET'&&url.pathname==='/api/courts'){
     const lat=Number(url.searchParams.get('lat'))||-3.7319,lon=Number(url.searchParams.get('lon'))||-38.5267,now=Date.now();db.checkins=db.checkins.filter(item=>now-new Date(item.createdAt).getTime()<14400000);writeDb(db);
-    return json(res,200,{courts:courts.map(court=>({...court,distance:km(lat,lon,court.lat,court.lon),players:db.checkins.filter(item=>item.courtId===court.id).length}))});
+    const osm=await searchOsmCourts(lat,lon,url.searchParams.get('refresh')==='1');const verified=courts.filter(court=>km(lat,lon,court.lat,court.lon)<=12);const seen=new Set(verified.map(court=>court.name.toLowerCase()));const merged=[...verified,...osm.results.filter(court=>!seen.has(court.name.toLowerCase()))];
+    return json(res,200,{courts:merged.map(court=>({...court,distance:km(lat,lon,court.lat,court.lon),players:db.checkins.filter(item=>item.courtId===court.id).length})).sort((a,b)=>a.distance-b.distance),meta:{cache:osm.cache,stale:Boolean(osm.stale),updatedAt:osm.updatedAt,osmResults:osm.results.length}});
   }
   const checkin=url.pathname.match(/^\/api\/courts\/([^/]+)\/checkin$/);
   if(method==='POST'&&checkin){const user=requireUser(req,res,db);if(!user)return;db.checkins=db.checkins.filter(item=>item.userId!==user.id);db.checkins.push({userId:user.id,userName:user.name,courtId:checkin[1],createdAt:new Date().toISOString()});writeDb(db);return json(res,200,{ok:true})}

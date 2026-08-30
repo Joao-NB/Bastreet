@@ -23,11 +23,13 @@ Senha para todas: `quadra123`
 ## Apresentação sugerida
 
 1. Cada integrante entra em uma conta diferente.
-2. Uma pessoa registra presença em uma quadra; outra atualiza a lista e mostra a presença real.
-3. Duas pessoas enviam mensagens e mostram que o chat sincroniza em até três segundos.
-4. Uma pessoa conclui um treino, comprovando a atualização persistente de XP e pontos semestrais.
-5. As quatro contas apertam **Buscar partida**. A quarta entrada forma automaticamente dois times de 2×2 e o resultado aparece nos quatro dispositivos.
-6. Abra o ranking para mostrar que os pontos vêm de ações registradas, não de valores fixos da interface.
+2. Permita a localização e mostre no mapa as quadras verificadas e as obtidas pelo OpenStreetMap.
+3. Abra **Como chegar** para demonstrar a integração de rota com o Google Maps.
+4. Uma pessoa registra presença em uma quadra; outra atualiza a lista e mostra a presença real.
+5. Duas pessoas enviam mensagens e mostram que o chat sincroniza em até três segundos.
+6. Uma pessoa conclui um treino, comprovando a atualização persistente de XP e pontos semestrais.
+7. As quatro contas apertam **Buscar partida**. A quarta entrada forma automaticamente dois times de 2×2 e o resultado aparece nos quatro dispositivos.
+8. Abra o ranking para mostrar que os pontos vêm de ações registradas, não de valores fixos da interface.
 
 ## O que é real neste protótipo
 
@@ -44,7 +46,8 @@ Senha para todas: `quadra123`
 
 - O servidor precisa permanecer ligado durante a apresentação.
 - Os dados ficam no computador da equipe, não em uma nuvem.
-- A base de quadras é curada e contém três locais de demonstração.
+- Três quadras são curadas pela equipe; as demais dependem da cobertura colaborativa do OpenStreetMap.
+- O cache geográfico é válido por 24 horas e garante resultados quando a API externa falhar.
 - Geolocalização em celulares pode ser bloqueada em HTTP; nesse caso, o aplicativo usa Fortaleza como referência.
 - O modo de banca usa quatro jogadores e partidas 2×2. O produto final pode elevar o mínimo para dez jogadores.
 - O bot simples é apenas um apoio de UX. O chat entre as contas da equipe é real.

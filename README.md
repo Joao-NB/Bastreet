@@ -17,6 +17,7 @@ Não é necessário instalar dependências. O protótipo usa HTML, CSS e JavaScr
 - Consulte partidas, ranking regional e perfil do jogador.
 - Navegue em layout responsivo para celular e desktop.
 - Autorize a localização do navegador e descubra quadras próximas.
+- Visualize resultados reais do OpenStreetMap em um mapa Leaflet interativo.
 - Simule a formação de times usando nível técnico, altura, gênero e disponibilidade.
 - Conclua treinos individuais, acumule XP e mantenha uma sequência semanal.
 - Converse em um chat demonstrativo com respostas automáticas.
@@ -34,7 +35,7 @@ O login e o cadastro usam uma API real, hash de senha com `scrypt` e tokens de s
 - **Pontos semestrais:** definem o ranking usado nos campeonatos do fim do semestre.
 - **Treino coletivo:** concede o dobro de pontos semestrais para valorizar participação comunitária.
 
-As quadras e perfis são dados demonstrativos. A localização real é solicitada pelo navegador, mas um produto em produção deve consultar uma base geográfica, como OpenStreetMap/Overpass ou Google Places, e calcular distâncias no backend.
+As quadras são formadas por uma base curada pela equipe e resultados reais da API Overpass/OpenStreetMap. As consultas ficam em cache por 24 horas, e a aplicação preserva a base verificada quando a internet estiver indisponível. O botão **Como chegar** abre a rota no Google Maps sem exigir chave de API.
 
 ## Demonstração com o grupo
 
