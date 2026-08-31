@@ -9,6 +9,8 @@ let matchTimeout;
 let timerInterval;
 let matchPoll;
 let elapsed = 0;
+let locationWatch;
+let lastLocationUpdate = 0;
 
 const authScreen = document.querySelector('#auth-screen');
 const authTabs = [...document.querySelectorAll('[data-auth-tab]')];
@@ -84,6 +86,8 @@ function showPage(id) {
   pages.forEach(page => page.classList.toggle('active', page.id === id));
   document.querySelectorAll('.bottom-nav [data-page]').forEach(button => button.classList.toggle('active', button.dataset.page === id));
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if(id==='quadras') startLiveLocation();
+  if(id==='chat') loadMessages();
 }
 
 navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
@@ -91,19 +95,21 @@ navButtons.forEach(button => button.addEventListener('click', () => showPage(but
 document.querySelectorAll('[data-mode]').forEach(card => card.addEventListener('click', () => {
   document.querySelectorAll('[data-mode]').forEach(item => item.classList.remove('selected'));
   card.classList.add('selected');
+  if(card.dataset.mode==='personalizada')openCustomMatch();else openMatchmaking(card.dataset.mode);
 }));
 
-async function openMatchmaking() {
+async function openMatchmaking(mode='normal') {
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   searchingState.hidden = false;
   foundState.hidden = true;
   elapsed = 0;
   timerLabel.textContent = '00:00';
+  document.querySelector('#search-title').textContent=mode==='rapida'?'Buscando o jogo mais próximo...':'Cruzando perfis...';
   clearTimeout(matchTimeout); clearInterval(timerInterval); clearInterval(matchPoll);
   timerInterval = setInterval(() => { elapsed += 1; timerLabel.textContent = `00:${String(elapsed).padStart(2, '0')}`; }, 1000);
   try {
-    const slot=document.querySelector('.availability button.active')?.textContent||'Terça • 19h';const result=await api('/api/matchmaking/join',{method:'POST',body:JSON.stringify({slot})});
+    const slot=mode==='rapida'?'Primeiro horário disponível':document.querySelector('.availability button.active')?.textContent||'Terça • 19h';const result=await api('/api/matchmaking/join',{method:'POST',body:JSON.stringify({slot,mode})});
     searchingState.querySelector('p:not(.eyebrow)').innerHTML=`<strong>${result.waiting}/${result.needed} pessoas reais</strong> na fila. Abra outras contas nos celulares do grupo.`;
     if(result.match)return showRealMatch(result.match);
     matchPoll=setInterval(async()=>{try{const status=await api('/api/matchmaking/status');if(status.match)showRealMatch(status.match);else searchingState.querySelector('p:not(.eyebrow)').innerHTML=`<strong>${status.waiting}/${status.needed} pessoas reais</strong> na fila. Aguardando o grupo...`;}catch{}},2500);
@@ -117,8 +123,8 @@ function closeMatchmaking() {
   clearTimeout(matchTimeout); clearInterval(timerInterval); clearInterval(matchPoll);
 }
 
-document.querySelector('#find-match').addEventListener('click', openMatchmaking);
-document.querySelector('#nav-match').addEventListener('click', openMatchmaking);
+document.querySelector('#find-match').addEventListener('click',()=>openMatchmaking('normal'));
+document.querySelector('#nav-match').addEventListener('click',()=>openMatchmaking('normal'));
 document.querySelector('#close-modal').addEventListener('click', closeMatchmaking);
 document.querySelector('#cancel-search').addEventListener('click', closeMatchmaking);
 document.querySelector('#confirm-match').addEventListener('click', () => { closeMatchmaking(); showPage('partidas'); showToast('Presença confirmada! Nos vemos na quadra 🏀'); });
@@ -130,7 +136,17 @@ function showToast(message) {
   clearTimeout(showToast.timeout); showToast.timeout = setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
+const customOverlay=document.querySelector('#custom-overlay');
+function openCustomMatch(){customOverlay.classList.add('open');customOverlay.setAttribute('aria-hidden','false')}
+function closeCustomMatch(){customOverlay.classList.remove('open');customOverlay.setAttribute('aria-hidden','true')}
+document.querySelector('#close-custom').addEventListener('click',closeCustomMatch);
+customOverlay.addEventListener('click',event=>{if(event.target===customOverlay)closeCustomMatch()});
+document.querySelector('#custom-match-form').addEventListener('submit',async event=>{event.preventDefault();const data=Object.fromEntries(new FormData(event.currentTarget));try{await api('/api/messages',{method:'POST',body:JSON.stringify({text:`Convite: ${data.name} • ${data.date} às ${data.time} • ${data.court} • ${data.format}`})});closeCustomMatch();event.currentTarget.reset();showPage('chat');showToast('Partida criada e convite enviado ao grupo!')}catch(error){showToast(error.message)}});
+
 document.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast)));
+document.querySelectorAll('.event-join').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;button.textContent='Entrando...';try{const result=await api(`/api/events/${button.dataset.event}/join`,{method:'POST'});const count=Math.min(10,6+result.count);document.querySelector(`[data-event-card="${button.dataset.event}"] .event-count`).textContent=`${count}/10`;button.textContent='✓ Confirmado';button.classList.add('joined');showToast('Sua vaga está confirmada! A partida foi adicionada em Partidas.');setTimeout(()=>showPage('partidas'),900)}catch(error){button.disabled=false;button.textContent='Entrar';showToast(error.message)}}));
+async function loadEventStatus(){try{const result=await api('/api/events/beira-mar');const count=Math.min(10,6+result.participants.length);document.querySelector('[data-event-card="beira-mar"] .event-count').textContent=`${count}/10`}catch{}}
+loadEventStatus();
 document.querySelectorAll('.filter-chips button, .tabs button').forEach(button => button.addEventListener('click', () => {
   button.parentElement.querySelectorAll('button').forEach(item => item.classList.remove('active')); button.classList.add('active');
 }));
@@ -161,14 +177,18 @@ async function loadCourts(lat=userLocation.lat,lon=userLocation.lon,refresh=fals
 loadCourts();
 document.querySelector('#court-filter').addEventListener('change', event => renderCourts(event.target.value));
 document.querySelector('#refresh-courts').addEventListener('click',()=>loadCourts(userLocation.lat,userLocation.lon,true));
-document.querySelector('#locate-me').addEventListener('click', () => {
-  const button = document.querySelector('#locate-me'); button.textContent = '⌛ Localizando...';
-  if (!navigator.geolocation) { document.querySelector('#location-label').textContent = 'Geolocalização indisponível. Exibindo Fortaleza, CE.'; button.textContent = '⌖ Usar minha localização'; return; }
-  navigator.geolocation.getCurrentPosition(position => {
-    document.querySelector('#location-label').textContent = `Localização atualizada (${position.coords.latitude.toFixed(3)}, ${position.coords.longitude.toFixed(3)}). Distâncias recalculadas.`;
-    button.textContent = '✓ Localização ativa'; button.classList.add('located'); loadCourts(position.coords.latitude,position.coords.longitude); showToast('Distâncias reais atualizadas!');
-  }, () => { document.querySelector('#location-label').textContent = 'Sem permissão de localização. Exibindo quadras em Fortaleza, CE.'; button.textContent = '⌖ Tentar novamente'; showToast('Permita o acesso à localização no navegador.'); }, { enableHighAccuracy: true, timeout: 7000 });
-});
+function startLiveLocation(){
+  const button=document.querySelector('#locate-me');
+  if(!navigator.geolocation){document.querySelector('#location-label').textContent='GPS indisponível. Exibindo Fortaleza, CE.';return}
+  if(locationWatch!==undefined)return;
+  button.textContent='⌛ Solicitando GPS...';
+  locationWatch=navigator.geolocation.watchPosition(position=>{
+    const now=Date.now(),lat=position.coords.latitude,lon=position.coords.longitude;button.textContent='● GPS em tempo real';button.classList.add('located');
+    document.querySelector('#location-label').textContent=`Sua posição está ativa • precisão aproximada de ${Math.round(position.coords.accuracy)} m`;
+    if(now-lastLocationUpdate>15000||lastLocationUpdate===0){lastLocationUpdate=now;loadCourts(lat,lon)}
+  },error=>{locationWatch=undefined;button.textContent='⌖ Permitir acesso ao GPS';document.querySelector('#location-label').textContent='GPS não autorizado. Usando Fortaleza como referência.';showToast(error.code===1?'Permita o GPS nas configurações do navegador.':'Não foi possível obter sua localização agora.')},{enableHighAccuracy:true,maximumAge:10000,timeout:12000});
+}
+document.querySelector('#locate-me').addEventListener('click',startLiveLocation);
 
 const players = [
   {n:'João', s:78, h:182, g:'H', p:'Ala-armador'}, {n:'Mariana', s:82, h:176, g:'M', p:'Armadora'},
