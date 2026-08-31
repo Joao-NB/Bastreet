@@ -16,8 +16,12 @@ const authForms = [...document.querySelectorAll('.auth-form')];
 const registerSteps = [...document.querySelectorAll('.register-step')];
 const apiToken = () => localStorage.getItem('bastreet-token') || '';
 async function api(path, options = {}) {
-  const response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiToken()}`, ...(options.headers || {}) } });
-  const result = await response.json();
+  let response;
+  try { response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiToken()}`, ...(options.headers || {}) } }); }
+  catch { throw new Error('Servidor indisponível. Execute npm run dev e tente novamente.'); }
+  const raw = await response.text();
+  let result = {};
+  try { result = raw ? JSON.parse(raw) : {}; } catch { throw new Error('O servidor respondeu em um formato inválido. Atualize a página e tente novamente.'); }
   if (!response.ok) throw new Error(result.error || 'Não foi possível concluir.');
   return result;
 }
