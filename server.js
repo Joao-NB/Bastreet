@@ -32,8 +32,9 @@ async function searchOsmCourts(lat,lon,radius=8000,force=false){
   if(cache&&fresh&&sameArea&&enoughRadius&&!force)return {...cache,cache:true};
   const query=`[out:json][timeout:25];nwr(around:${radius},${lat},${lon})["sport"="basketball"];out center tags;`;
   try{
-    const response=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'BASTREET-Academic-MVP/1.0'},body:`data=${encodeURIComponent(query)}`,signal:AbortSignal.timeout(22000)});
-    if(!response.ok)throw new Error(`Overpass ${response.status}`);const data=await response.json();
+    const endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];let data,lastError;
+    for(const endpoint of endpoints){try{const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'BASTREET-Academic-MVP/1.0'},body:`data=${encodeURIComponent(query)}`,signal:AbortSignal.timeout(28000)});if(!response.ok)throw new Error(`${response.status}`);data=await response.json();break}catch(error){lastError=error}}
+    if(!data)throw new Error(`Todos os provedores falharam: ${lastError?.message||'indisponível'}`);
     const results=data.elements.map(item=>{const tags=item.tags||{},point=item.center||item;return {id:`osm-${item.type}-${item.id}`,name:tags.name||'Quadra de basquete',area:tags['addr:suburb']||tags['addr:neighbourhood']||'Região próxima',lat:point.lat,lon:point.lon,light:tags.lit==='yes',surface:tags.surface||'Não informada',open:tags.opening_hours||'Não informado',access:tags.access||'yes',hoops:tags.hoops||null,source:'osm'}}).filter(item=>Number.isFinite(item.lat)&&Number.isFinite(item.lon));
     const value={updatedAt:new Date().toISOString(),center:{lat,lon},radius,results};fs.writeFileSync(courtsCacheFile,JSON.stringify(value,null,2));return {...value,cache:false};
   }catch(error){console.error('Falha no Overpass:',error.message);if(cache)return {...cache,cache:true,stale:true};return {updatedAt:null,results:[],cache:true,stale:true}}
