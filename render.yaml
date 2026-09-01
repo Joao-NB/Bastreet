@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: bastreet
+    runtime: node
+    plan: free
+    region: ohio
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 24.16.0
+      - key: SEED_DEMO
+        value: "true"

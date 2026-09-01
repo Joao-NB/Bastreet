@@ -44,3 +44,5 @@ Execute `npm run demo:prepare` para restaurar as quatro contas da equipe e consu
 ## Deploy
 
 GitHub Pages não executa o backend Node.js e, portanto, não é mais adequado para esta versão. Um deploy público deve hospedar o servidor em Render, Railway ou Fly.io e substituir o arquivo JSON por PostgreSQL/Supabase. Para a apresentação presencial, a execução em rede local reduz dependência da internet e demonstra comunicação real entre dispositivos.
+
+O arquivo `render.yaml` permite criar uma instância de demonstração diretamente a partir do GitHub. Ela inicializa as quatro contas do grupo automaticamente e possui verificação de saúde em `/api/health`. No plano gratuito do Render, os dados criados após a inicialização podem ser perdidos quando a instância reiniciar; persistência permanente requer PostgreSQL ou disco persistente.

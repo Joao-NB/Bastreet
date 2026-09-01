@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const os = require('os');
 const port = Number(process.env.PORT) || 4173;
 const root = __dirname;
-const dataDir = path.join(root, 'data');
+const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(root, 'data');
 const dbFile = path.join(dataDir, 'db.json');
 const courtsCacheFile = path.join(dataDir, 'courts-cache.json');
 const types = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8' };
@@ -14,7 +14,8 @@ const courts = [
   {id:'gentilandia',name:'Praça da Gentilândia',area:'Benfica',lat:-3.7445,lon:-38.5372,light:true,surface:'Concreto',open:'24h',source:'verified'},
   {id:'papicu',name:'Areninha do Papicu',area:'Papicu',lat:-3.7394,lon:-38.4565,light:false,surface:'Piso esportivo',open:'20h',source:'verified'}
 ];
-function initialDb(){return {users:[],sessions:[],trainings:[],checkins:[],messages:[{id:crypto.randomUUID(),userId:'bot',userName:'Rafael (bot)',text:'Bem-vindos ao grupo! Quem topa um treino hoje às 19h?',createdAt:new Date().toISOString()}],queue:[],matches:[],eventParticipants:[]}}
+function demoUsers(){return [['Ruan Deud','ruan@bastreet.demo','Homem',184,'Armador',76],['João Guilherme','joao@bastreet.demo','Homem',182,'Ala-armador',78],['Daniel Moura','daniel@bastreet.demo','Homem',191,'Pivô',74],['Bárbara Menezes','barbara@bastreet.demo','Mulher',177,'Ala',80]].map(([name,email,gender,height,position,skill])=>{const pass=secure('quadra123');return {id:crypto.randomUUID(),name,email,passwordHash:pass.hash,salt:pass.salt,age:21,height,location:'Fortaleza, CE',position,gender,level:'Intermediário',availability:['Ter','Qui','Sáb'],skill,xp:0,semesterPoints:0,createdAt:new Date().toISOString()}})}
+function initialDb(){return {users:process.env.SEED_DEMO==='true'?demoUsers():[],sessions:[],trainings:[],checkins:[],messages:[{id:crypto.randomUUID(),userId:'bot',userName:'Rafael (bot)',text:'Bem-vindos ao grupo! Quem topa um treino hoje às 19h?',createdAt:new Date().toISOString()}],queue:[],matches:[],eventParticipants:[]}}
 function readDb(){if(!fs.existsSync(dataDir))fs.mkdirSync(dataDir,{recursive:true});if(!fs.existsSync(dbFile))fs.writeFileSync(dbFile,JSON.stringify(initialDb(),null,2));return JSON.parse(fs.readFileSync(dbFile,'utf8'))}
 function writeDb(db){const temp=`${dbFile}.tmp`;fs.writeFileSync(temp,JSON.stringify(db,null,2));fs.renameSync(temp,dbFile)}
 function json(res,status,value){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value))}
@@ -40,6 +41,7 @@ async function searchOsmCourts(lat,lon,force=false){
 
 async function api(req,res,url){
   const db=readDb(),method=req.method;
+  if(method==='GET'&&url.pathname==='/api/health')return json(res,200,{status:'ok',service:'bastreet',time:new Date().toISOString()});
   if(method==='POST'&&url.pathname==='/api/auth/register'){
     const input=await body(req),email=String(input.email||'').trim().toLowerCase();
     if(!email.includes('@')||String(input.password||'').length<6||!String(input.name||'').trim())return json(res,400,{error:'Preencha nome, e-mail válido e senha com 6 caracteres.'});
