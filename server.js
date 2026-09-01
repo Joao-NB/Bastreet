@@ -13,6 +13,12 @@ const courts = [
   {id:'parque-santana',name:'Parque Santana Ariano Suassuna',area:'Santana',lat:-8.0298,lon:-34.9147,light:true,surface:'Piso esportivo',open:'22h',source:'verified'},
   {id:'parque-jaqueira',name:'Parque da Jaqueira',area:'Jaqueira',lat:-8.0363,lon:-34.9045,light:true,surface:'Concreto',open:'22h',source:'verified'}
 ];
+const recifeOsmSnapshot=[
+  {id:'osm-way-580987421',name:'Quadra de basquete — Zona Oeste',area:'Recife',lat:-8.03396,lon:-34.951406,light:false,surface:'Não informada',open:'Não informado',access:'yes',source:'osm'},
+  {id:'osm-way-580987424',name:'Quadra de basquete — Cordeiro',area:'Recife',lat:-8.036322,lon:-34.9471202,light:false,surface:'Não informada',open:'Não informado',access:'yes',source:'osm'},
+  {id:'osm-way-678531211',name:'Quadra de basquete — Torre',area:'Torre',lat:-8.0439104,lon:-34.9149406,light:false,surface:'Não informada',open:'Não informado',access:'yes',source:'osm'},
+  {id:'osm-way-969854180',name:'Quadra da Igreja dos Mórmons',area:'Recife',lat:-8.0551282,lon:-34.8900594,light:false,surface:'Pavimentada',open:'Não informado',access:'permissive',hoops:'2',source:'osm'}
+];
 function demoUsers(){return [['Ruan Deud','ruan@bastreet.demo','quadra123','Homem',184,'Armador',76,'player'],['João Guilherme','joao@bastreet.demo','quadra123','Homem',182,'Ala-armador',78,'player'],['Daniel Moura','daniel@bastreet.demo','quadra123','Homem',191,'Pivô',74,'player'],['Bárbara Menezes','barbara@bastreet.demo','quadra123','Mulher',177,'Ala',80,'player'],['Administrador BASTREET','admin@teste.com','admin123','Prefiro não informar',180,'Administrador',85,'admin']].map(([name,email,password,gender,height,position,skill,role])=>{const pass=secure(password);return {id:crypto.randomUUID(),name,email,passwordHash:pass.hash,salt:pass.salt,age:21,height,location:'Recife, PE',position,gender,level:'Intermediário',availability:['Ter','Qui','Sáb'],skill,xp:0,semesterPoints:0,role,createdAt:new Date().toISOString()}})}
 function initialDb(){return {users:process.env.SEED_DEMO==='true'?demoUsers():[],sessions:[],trainings:[],checkins:[],messages:[{id:crypto.randomUUID(),userId:'bot',userName:'Rafael (bot)',text:'Bem-vindos ao grupo! Quem topa um treino hoje às 19h?',createdAt:new Date().toISOString()}],queue:[],matches:[],eventParticipants:[]}}
 function readDb(){if(!fs.existsSync(dataDir))fs.mkdirSync(dataDir,{recursive:true});if(!fs.existsSync(dbFile))fs.writeFileSync(dbFile,JSON.stringify(initialDb(),null,2));return JSON.parse(fs.readFileSync(dbFile,'utf8'))}
@@ -37,7 +43,7 @@ async function searchOsmCourts(lat,lon,radius=8000,force=false){
     if(!data)throw new Error(`Todos os provedores falharam: ${lastError?.message||'indisponível'}`);
     const results=data.elements.map(item=>{const tags=item.tags||{},point=item.center||item;return {id:`osm-${item.type}-${item.id}`,name:tags.name||'Quadra de basquete',area:tags['addr:suburb']||tags['addr:neighbourhood']||'Região próxima',lat:point.lat,lon:point.lon,light:tags.lit==='yes',surface:tags.surface||'Não informada',open:tags.opening_hours||'Não informado',access:tags.access||'yes',hoops:tags.hoops||null,source:'osm'}}).filter(item=>Number.isFinite(item.lat)&&Number.isFinite(item.lon));
     const value={updatedAt:new Date().toISOString(),center:{lat,lon},radius,results};fs.writeFileSync(courtsCacheFile,JSON.stringify(value,null,2));return {...value,cache:false};
-  }catch(error){console.error('Falha no Overpass:',error.message);if(cache)return {...cache,cache:true,stale:true};return {updatedAt:null,results:[],cache:true,stale:true}}
+  }catch(error){console.error('Falha no Overpass:',error.message);if(cache&&sameArea)return {...cache,cache:true,stale:true};if(km(lat,lon,-8.0476,-34.9084)<30)return {updatedAt:'2026-09-01T00:00:00.000Z',center:{lat:-8.0476,lon:-34.9084},radius:25000,results:recifeOsmSnapshot,cache:true,stale:true};return {updatedAt:null,results:[],cache:true,stale:true}}
 }
 
 async function api(req,res,url){
