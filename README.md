@@ -35,7 +35,7 @@ O login e o cadastro usam uma API real, hash de senha com `scrypt` e tokens de s
 - **Pontos semestrais:** definem o ranking usado nos campeonatos do fim do semestre.
 - **Treino coletivo:** concede o dobro de pontos semestrais para valorizar participação comunitária.
 
-As quadras são formadas por uma base curada pela equipe e resultados reais da API Overpass/OpenStreetMap. As consultas ficam em cache por 24 horas, e a aplicação preserva a base verificada quando a internet estiver indisponível. O botão **Como chegar** abre a rota no Google Maps sem exigir chave de API.
+As quadras são formadas por uma base curada em Recife e resultados reais da API Overpass/OpenStreetMap. O GPS centraliza o mapa na posição atual; sem permissão, Torre/Recife é usada como referência. A busca começa em 8 km e aumenta automaticamente para 25 km quando há poucos resultados. O cache só é reutilizado na mesma região, evitando misturar cidades. O botão **Como chegar** abre a rota no Google Maps sem exigir chave de API.
 
 ## Demonstração com o grupo
 

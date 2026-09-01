@@ -152,7 +152,7 @@ document.querySelectorAll('.filter-chips button, .tabs button').forEach(button =
 }));
 
 let courts = [];
-let userLocation = {lat:-3.7319,lon:-38.5267};
+let userLocation = {lat:-8.0476,lon:-34.9084};
 const courtsMap = L.map('courts-map',{zoomControl:false}).setView([userLocation.lat,userLocation.lon],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(courtsMap);
 L.control.zoom({position:'topright'}).addTo(courtsMap);
@@ -173,20 +173,20 @@ function renderCourts(sort = 'distance') {
   document.querySelectorAll('.court-checkin').forEach(button => button.addEventListener('click', async()=>{try{await api(`/api/courts/${button.dataset.courtId}/checkin`,{method:'POST'});showToast('Presença registrada por 4 horas.');await loadCourts()}catch(error){showToast(error.message)}}));
 }
 
-async function loadCourts(lat=userLocation.lat,lon=userLocation.lon,refresh=false){try{document.querySelector('#map-source').textContent='Consultando quadras...';const result=await api(`/api/courts?lat=${lat}&lon=${lon}${refresh?'&refresh=1':''}`);userLocation={lat,lon};courts=result.courts;document.querySelector('#court-count').textContent=courts.length;document.querySelector('#map-source').textContent=result.meta.stale?'Modo offline • cache + base verificada':result.meta.cache?`Cache local • ${result.meta.osmResults} do OpenStreetMap`:`Atualizado agora • ${result.meta.osmResults} do OpenStreetMap`;renderCourts(document.querySelector('#court-filter').value);updateMap()}catch(error){document.querySelector('#map-source').textContent='Base verificada';showToast(error.message)}}
+async function loadCourts(lat=userLocation.lat,lon=userLocation.lon,refresh=false){try{document.querySelector('#map-source').textContent='Consultando quadras próximas...';const result=await api(`/api/courts?lat=${lat}&lon=${lon}${refresh?'&refresh=1':''}`);userLocation={lat,lon};courts=result.courts;document.querySelector('#court-count').textContent=courts.length;document.querySelector('#search-radius').textContent=`${result.meta.radius} km`;document.querySelector('#map-source').textContent=result.meta.stale?'Modo offline • cache + base verificada':result.meta.expanded?`Busca ampliada automaticamente • ${result.meta.osmResults} no OSM`:result.meta.cache?`Cache local • ${result.meta.osmResults} no OSM`:`Atualizado agora • ${result.meta.osmResults} no OSM`;renderCourts(document.querySelector('#court-filter').value);updateMap()}catch(error){document.querySelector('#map-source').textContent='Não foi possível atualizar agora';showToast(error.message)}}
 loadCourts();
 document.querySelector('#court-filter').addEventListener('change', event => renderCourts(event.target.value));
 document.querySelector('#refresh-courts').addEventListener('click',()=>loadCourts(userLocation.lat,userLocation.lon,true));
 function startLiveLocation(){
   const button=document.querySelector('#locate-me');
-  if(!navigator.geolocation){document.querySelector('#location-label').textContent='GPS indisponível. Exibindo Fortaleza, CE.';return}
+  if(!navigator.geolocation){document.querySelector('#location-label').textContent='GPS indisponível. Exibindo Torre, Recife como referência.';return}
   if(locationWatch!==undefined)return;
   button.textContent='⌛ Solicitando GPS...';
   locationWatch=navigator.geolocation.watchPosition(position=>{
     const now=Date.now(),lat=position.coords.latitude,lon=position.coords.longitude;button.textContent='● GPS em tempo real';button.classList.add('located');
     document.querySelector('#location-label').textContent=`Sua posição está ativa • precisão aproximada de ${Math.round(position.coords.accuracy)} m`;
     if(now-lastLocationUpdate>15000||lastLocationUpdate===0){lastLocationUpdate=now;loadCourts(lat,lon)}
-  },error=>{locationWatch=undefined;button.textContent='⌖ Permitir acesso ao GPS';document.querySelector('#location-label').textContent='GPS não autorizado. Usando Fortaleza como referência.';showToast(error.code===1?'Permita o GPS nas configurações do navegador.':'Não foi possível obter sua localização agora.')},{enableHighAccuracy:true,maximumAge:10000,timeout:12000});
+  },error=>{locationWatch=undefined;button.textContent='⌖ Permitir acesso ao GPS';document.querySelector('#location-label').textContent='GPS não autorizado. Usando Torre, Recife como referência.';loadCourts(-8.0476,-34.9084);showToast(error.code===1?'Permita o GPS nas configurações do navegador para resultados exatos.':'Não foi possível obter sua localização agora.')},{enableHighAccuracy:true,maximumAge:10000,timeout:12000});
 }
 document.querySelector('#locate-me').addEventListener('click',startLiveLocation);
 

@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="description" content="BASTREET — encontre partidas de basquete equilibradas perto de você.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="BASTREET">
+  <meta property="og:title" content="BASTREET — Encontre. Jogue. Evolua.">
+  <meta property="og:description" content="Encontre quadras e jogadores de basquete perto de você, forme times equilibrados e evolua a cada treino.">
+  <meta property="og:url" content="__BASE_URL__">
+  <meta property="og:image" content="__BASE_URL__/assets/og-bastreet.png">
+  <meta property="og:image:width" content="1728">
+  <meta property="og:image:height" content="909">
+  <meta property="og:image:alt" content="BASTREET — basquete de rua, comunidade e evolução">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BASTREET — Encontre. Jogue. Evolua.">
+  <meta name="twitter:description" content="Quadras, partidas, treinos e comunidade de basquete perto de você.">
+  <meta name="twitter:image" content="__BASE_URL__/assets/og-bastreet.png">
   <title>BASTREET — Encontre. Jogue. Evolua.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +49,7 @@
         <div class="register-step active" data-step="1">
           <label>Nome completo<input name="name" placeholder="Como podemos chamar você?" required><span class="field-error">Informe seu nome.</span></label>
           <div class="field-pair"><label>Idade<input type="number" name="age" placeholder="18" min="16" max="80" required><span class="field-error">Idade mínima: 16 anos.</span></label><label>Altura (cm)<input type="number" name="height" placeholder="182" min="130" max="230" required><span class="field-error">Informe sua altura.</span></label></div>
-          <label>Localização<input name="location" placeholder="Fortaleza, CE" required><span class="field-error">Informe sua cidade.</span></label><button class="primary-cta auth-submit" type="button" id="next-register">Continuar <span>→</span></button>
+          <label>Localização<input name="location" placeholder="Recife, PE" required><span class="field-error">Informe sua cidade.</span></label><button class="primary-cta auth-submit" type="button" id="next-register">Continuar <span>→</span></button>
         </div>
         <div class="register-step" data-step="2">
           <div class="field-pair"><label>Posição<select name="position" required><option value="">Selecione</option><option>Armador</option><option>Ala-armador</option><option>Ala</option><option>Ala-pivô</option><option>Pivô</option></select><span class="field-error">Escolha sua posição.</span></label><label>Gênero<select name="gender" required><option value="">Selecione</option><option>Mulher</option><option>Homem</option><option>Não binário</option><option>Prefiro não informar</option></select><span class="field-error">Selecione uma opção.</span></label></div>
@@ -62,7 +76,7 @@
     <section class="page active" id="inicio" aria-labelledby="welcome-title">
       <div class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">FORTALEZA • CE</p>
+          <p class="eyebrow">RECIFE • PE</p>
           <h1 id="welcome-title">E aí, <span>João!</span><br>Pronto pro jogo?</h1>
           <p class="hero-subtitle">Encontre sua próxima partida, jogue com pessoas do seu nível e suba no ranking.</p>
           <button class="primary-cta" id="find-match"><span>Buscar partida</span><span class="arrow">↗</span></button>
@@ -94,8 +108,8 @@
       <section class="nearby">
         <div class="section-heading"><div><p class="eyebrow">NA SUA REGIÃO</p><h2>Próximas partidas</h2></div><button class="text-button" data-page="partidas">Ver todas →</button></div>
         <div class="match-list">
-          <article class="match-card" data-event-card="beira-mar"><div class="date-block"><strong>HOJE</strong><span>19:30</span></div><div class="match-info"><h3>Basquete na Beira-Mar</h3><p>⌖ Quadra da Beira-Mar • 2,4 km</p><div class="tags"><span>Normal</span><span>Nível intermediário</span></div></div><div class="players"><div class="avatar-stack"><i>R</i><i>M</i><i>L</i><i>+3</i></div><span><strong class="event-count">6/10</strong><small>jogadores</small></span></div><button class="join-button event-join" data-event="beira-mar">Entrar</button></article>
-          <article class="match-card"><div class="date-block"><strong>AMANHÃ</strong><span>18:00</span></div><div class="match-info"><h3>Racha do Benfica</h3><p>⌖ Praça da Gentilândia • 4,1 km</p><div class="tags"><span>Rápida</span><span>Todos os níveis</span></div></div><div class="players"><div class="avatar-stack"><i>A</i><i>B</i><i>+5</i></div><span><strong>7/10</strong><small>jogadores</small></span></div><button class="join-button" data-toast="Você entrou no Racha do Benfica!">Entrar</button></article>
+          <article class="match-card" data-event-card="beira-mar"><div class="date-block"><strong>HOJE</strong><span>19:30</span></div><div class="match-info"><h3>Basquete no Parque Santana</h3><p>⌖ Parque Santana • Recife</p><div class="tags"><span>Normal</span><span>Nível intermediário</span></div></div><div class="players"><div class="avatar-stack"><i>R</i><i>M</i><i>L</i><i>+3</i></div><span><strong class="event-count">6/10</strong><small>jogadores</small></span></div><button class="join-button event-join" data-event="beira-mar">Entrar</button></article>
+          <article class="match-card"><div class="date-block"><strong>AMANHÃ</strong><span>18:00</span></div><div class="match-info"><h3>Racha da Jaqueira</h3><p>⌖ Parque da Jaqueira • Recife</p><div class="tags"><span>Rápida</span><span>Todos os níveis</span></div></div><div class="players"><div class="avatar-stack"><i>A</i><i>B</i><i>+5</i></div><span><strong>7/10</strong><small>jogadores</small></span></div><button class="join-button" data-toast="Você entrou no Racha da Jaqueira!">Entrar</button></article>
         </div>
       </section>
     </section>
@@ -103,7 +117,7 @@
     <section class="page" id="partidas" aria-labelledby="matches-title">
       <p class="eyebrow">SUA JORNADA</p><h1 class="page-title" id="matches-title">Partidas</h1>
       <div class="tabs"><button class="active">Próximas</button><button>Histórico</button><button>Convites <b>2</b></button></div>
-      <div class="featured-match"><div><span class="status-pill">CONFIRMADA</span><p>Hoje • 19:30</p><h2>Basquete na Beira-Mar</h2><p>⌖ Quadra da Beira-Mar, Meireles</p></div><div class="versus"><span>TIME A</span><strong>VS</strong><span>TIME B</span></div><button class="primary-cta compact" data-toast="Abrindo detalhes da partida...">Ver partida <span>→</span></button></div>
+      <div class="featured-match"><div><span class="status-pill">CONFIRMADA</span><p>Hoje • 19:30</p><h2>Basquete no Parque Santana</h2><p>⌖ Parque Santana, Recife</p></div><div class="versus"><span>TIME A</span><strong>VS</strong><span>TIME B</span></div><button class="primary-cta compact" data-toast="Abrindo detalhes da partida...">Ver partida <span>→</span></button></div>
     </section>
 
     <section class="page" id="ranking" aria-labelledby="ranking-title">
@@ -119,9 +133,9 @@
     </section>
 
     <section class="page" id="quadras" aria-labelledby="courts-title">
-      <div class="page-head-row"><div><p class="eyebrow">JOGUE PERTO DE VOCÊ</p><h1 class="page-title" id="courts-title">Quadras</h1><p class="page-lead" id="location-label">Usando Fortaleza como localização inicial.</p></div><button class="locate-button" id="locate-me">⌖ Usar minha localização</button></div>
+      <div class="page-head-row"><div><p class="eyebrow">JOGUE PERTO DE VOCÊ</p><h1 class="page-title" id="courts-title">Quadras</h1><p class="page-lead" id="location-label">Preparando o GPS para localizar você...</p></div><button class="locate-button" id="locate-me">⌖ Ativar localização</button></div>
       <div class="court-layout">
-        <div class="map-sim" aria-label="Mapa real de quadras próximas"><div id="courts-map"></div><div class="map-distance">Raio de busca: <strong>8 km</strong><small id="map-source">Base verificada + OpenStreetMap</small></div></div>
+        <div class="map-sim" aria-label="Mapa real de quadras próximas"><div id="courts-map"></div><div class="map-distance">Raio de busca: <strong id="search-radius">8 km</strong><small id="map-source">GPS + OpenStreetMap</small></div></div>
         <div class="court-results"><div class="result-toolbar"><strong><span id="court-count">3</span> quadras encontradas</strong><div><button id="refresh-courts" title="Atualizar OpenStreetMap">↻</button><select id="court-filter"><option value="distance">Mais próximas</option><option value="activity">Mais jogadores</option><option value="lighting">Com iluminação</option><option value="verified">Verificadas</option></select></div></div><div id="court-list"></div></div>
       </div>
       <section class="team-builder"><div class="team-builder-head"><div><p class="eyebrow">FORMAÇÃO INTELIGENTE</p><h2>Monte times equilibrados</h2><p>Cruzamos nível técnico, altura, gênero e disponibilidade. O ranking semestral não interfere no equilíbrio da partida.</p></div><button class="primary-cta" id="build-teams">Simular times <span>↗</span></button></div><div class="availability"><span>Disponibilidade em comum</span><button class="active">Terça • 19h</button><button>Quinta • 20h</button><button>Sábado • 16h</button></div><div class="team-output" id="team-output"><div class="empty-teams"><span>◎</span><p>Selecione um horário e simule o cruzamento de 10 perfis.</p></div></div></section>
@@ -141,11 +155,11 @@
 
     <section class="page" id="chat" aria-labelledby="chat-title">
       <p class="eyebrow">ORGANIZE O JOGO</p><h1 class="page-title" id="chat-title">Mensagens</h1>
-      <div class="chat-shell"><aside class="chat-list"><div class="chat-search">⌕ <input placeholder="Buscar conversa"></div><button class="chat-person active" data-chat="racha"><span class="mini-avatar">RB</span><span><strong>Racha da Beira-Mar</strong><small>Rafael: Fechado então! 🏀</small></span><i>2</i></button><button class="chat-person" data-chat="mari"><span class="mini-avatar">MC</span><span><strong>Mariana Costa</strong><small>Vamos treinar quinta?</small></span></button><button class="chat-person" data-chat="pedro"><span class="mini-avatar">PS</span><span><strong>Pedro Silva</strong><small>Você: valeu pelo jogo!</small></span></button></aside><section class="chat-panel"><header><span class="mini-avatar">RB</span><span><strong id="chat-name">Racha da Beira-Mar</strong><small><i></i> 6 membros online</small></span></header><div class="messages" id="messages"><div class="date-divider">Hoje</div><div class="bubble bot"><b>Rafael</b>Galera, treino confirmado hoje às 19:30?<small>17:42</small></div><div class="bubble user">Por mim fechado! Quem leva a bola?<small>17:44</small></div><div class="bubble bot"><b>Mariana</b>Eu levo. Encontro vocês na entrada da quadra 🙌<small>17:45</small></div></div><form class="chat-compose" id="chat-form"><button type="button" aria-label="Anexar">＋</button><input id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off"><button type="submit" aria-label="Enviar">➤</button></form></section></div>
+      <div class="chat-shell"><aside class="chat-list"><div class="chat-search">⌕ <input placeholder="Buscar conversa"></div><button class="chat-person active" data-chat="racha"><span class="mini-avatar">RB</span><span><strong>Basquete Recife</strong><small>Rafael: Fechado então! 🏀</small></span><i>2</i></button><button class="chat-person" data-chat="mari"><span class="mini-avatar">MC</span><span><strong>Mariana Costa</strong><small>Vamos treinar quinta?</small></span></button><button class="chat-person" data-chat="pedro"><span class="mini-avatar">PS</span><span><strong>Pedro Silva</strong><small>Você: valeu pelo jogo!</small></span></button></aside><section class="chat-panel"><header><span class="mini-avatar">RB</span><span><strong id="chat-name">Basquete Recife</strong><small><i></i> 6 membros online</small></span></header><div class="messages" id="messages"><div class="date-divider">Hoje</div><div class="bubble bot"><b>Rafael</b>Galera, treino confirmado hoje às 19:30?<small>17:42</small></div><div class="bubble user">Por mim fechado! Quem leva a bola?<small>17:44</small></div><div class="bubble bot"><b>Mariana</b>Eu levo. Encontro vocês na entrada da quadra 🙌<small>17:45</small></div></div><form class="chat-compose" id="chat-form"><button type="button" aria-label="Anexar">＋</button><input id="chat-input" placeholder="Pergunte sobre horário, vaga, quadra ou treino..." autocomplete="off"><button type="submit" aria-label="Enviar">➤</button></form></section></div>
     </section>
 
     <section class="page" id="perfil" aria-labelledby="profile-title">
-      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p>⌖ Fortaleza, CE • Homem • Ala-armador • 1,82 m</p><div class="tags"><span>Intermediário</span><span>Disponível: ter, qui e sáb</span><span>Nível 12</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
+      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p>⌖ Recife, PE • Homem • Ala-armador • 1,82 m</p><div class="tags"><span>Intermediário</span><span>Disponível: ter, qui e sáb</span><span>Nível 12</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
       <div class="profile-grid"><div class="stat-panel"><span><small>PONTOS SEMESTRAIS</small><strong>1.240</strong></span><span><small>RANKING LOCAL</small><strong>#8</strong></span><span><small>PARTIDAS</small><strong>18</strong></span><span><small>TREINOS</small><strong>24</strong></span></div><div class="history-panel"><p class="eyebrow">ÚLTIMOS TREINOS</p><h2>Sua consistência</h2><div class="results"><i class="win">✓</i><i class="win">✓</i><i class="loss">—</i><i class="win">✓</i><i class="win">✓</i></div><p><strong>+86 pontos</strong> nesta semana</p></div></div>
       <button class="logout-button" id="logout-button">Sair da conta</button>
     </section>
@@ -159,10 +173,10 @@
     <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
       <button class="close-modal" id="close-modal" aria-label="Fechar">×</button>
       <div class="searching-state" id="searching-state"><div class="radar"><span>🏀</span><i></i><i></i><i></i></div><p class="eyebrow">MATCHMAKING ATIVO</p><h2 id="search-title">Cruzando perfis...</h2><p>Buscando atletas compatíveis por <strong>nível, altura e disponibilidade</strong> em um raio de 8 km.</p><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong>4</strong><small>mínimo para a demo</small></span></div><button class="secondary-button" id="cancel-search">Cancelar busca</button></div>
-      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p>Hoje, 19:30 • Quadra da Beira-Mar</p><div class="team-balance"><div><small>TIME A</small><strong>77</strong><span>Nível médio</span></div><b>VS</b><div><small>TIME B</small><strong>78</strong><span>Nível médio</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button><small class="deadline">Confirme em até 45 segundos</small></div>
+      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p>Hoje, 19:30 • Parque Santana</p><div class="team-balance"><div><small>TIME A</small><strong>77</strong><span>Nível médio</span></div><b>VS</b><div><small>TIME B</small><strong>78</strong><span>Nível médio</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button><small class="deadline">Confirme em até 45 segundos</small></div>
     </div>
   </div>
-  <div class="match-overlay" id="custom-overlay" aria-hidden="true"><div class="search-modal custom-modal" role="dialog" aria-modal="true"><button class="close-modal" id="close-custom" aria-label="Fechar">×</button><p class="eyebrow">CRIAR PARTIDA</p><h2>Personalizada</h2><form id="custom-match-form"><label>Nome da partida<input name="name" placeholder="Ex.: Racha da turma" required></label><div class="field-pair"><label>Data<input name="date" type="date" required></label><label>Horário<input name="time" type="time" required></label></div><label>Quadra<select name="court"><option>Quadra da Beira-Mar</option><option>Praça da Gentilândia</option><option>Areninha do Papicu</option></select></label><div class="field-pair"><label>Formato<select name="format"><option>2 × 2</option><option>3 × 3</option><option>5 × 5</option></select></label><label>Tipo<select name="type"><option>Misto</option><option>Livre</option></select></label></div><button class="primary-cta auth-submit" type="submit">Criar e convidar <span>→</span></button></form></div></div>
+  <div class="match-overlay" id="custom-overlay" aria-hidden="true"><div class="search-modal custom-modal" role="dialog" aria-modal="true"><button class="close-modal" id="close-custom" aria-label="Fechar">×</button><p class="eyebrow">CRIAR PARTIDA</p><h2>Personalizada</h2><form id="custom-match-form"><label>Nome da partida<input name="name" placeholder="Ex.: Racha da turma" required></label><div class="field-pair"><label>Data<input name="date" type="date" required></label><label>Horário<input name="time" type="time" required></label></div><label>Quadra<select name="court"><option>Parque Santana</option><option>Parque da Jaqueira</option><option>Outra quadra do mapa</option></select></label><div class="field-pair"><label>Formato<select name="format"><option>2 × 2</option><option>3 × 3</option><option>5 × 5</option></select></label><label>Tipo<select name="type"><option>Misto</option><option>Livre</option></select></label></div><button class="primary-cta auth-submit" type="submit">Criar e convidar <span>→</span></button></form></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="node_modules/leaflet/dist/leaflet.js"></script>
   <script src="app.js"></script>

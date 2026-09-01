@@ -48,7 +48,7 @@ Senha para todas: `quadra123`
 - Os dados ficam no computador da equipe, não em uma nuvem.
 - Três quadras são curadas pela equipe; as demais dependem da cobertura colaborativa do OpenStreetMap.
 - O cache geográfico é válido por 24 horas e garante resultados quando a API externa falhar.
-- Geolocalização em celulares pode ser bloqueada em HTTP; nesse caso, o aplicativo usa Fortaleza como referência.
+- Geolocalização em celulares pode ser bloqueada em HTTP; nesse caso, o aplicativo usa Torre, Recife como referência. No domínio HTTPS de produção, o GPS é solicitado normalmente.
 - O modo de banca usa quatro jogadores e partidas 2×2. O produto final pode elevar o mínimo para dez jogadores.
 - O bot simples é apenas um apoio de UX. O chat entre as contas da equipe é real.
 
