@@ -10,7 +10,7 @@ const dbFile = path.join(dataDir, 'db.json');
 const courtsCacheFile = path.join(dataDir, 'courts-cache.json');
 const adminEmail = String(process.env.ADMIN_EMAIL || 'admin@teste.com').trim().toLowerCase();
 let adminEnsured = false;
-const types = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.png':'image/png', '.ico':'image/x-icon' };
+const types = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.png':'image/png', '.svg':'image/svg+xml; charset=utf-8', '.ico':'image/x-icon' };
 const courts = [
   {id:'parque-santana',name:'Parque Santana Ariano Suassuna',area:'Santana',lat:-8.0298,lon:-34.9147,light:true,surface:'Piso esportivo',open:'22h',source:'verified'},
   {id:'parque-jaqueira',name:'Parque da Jaqueira',area:'Jaqueira',lat:-8.0363,lon:-34.9045,light:true,surface:'Concreto',open:'22h',source:'verified'}
