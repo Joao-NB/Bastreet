@@ -13,3 +13,7 @@ services:
         value: 24.16.0
       - key: SEED_DEMO
         value: "true"
+      - key: ADMIN_EMAIL
+        value: admin@teste.com
+      - key: ADMIN_PASSWORD
+        sync: false

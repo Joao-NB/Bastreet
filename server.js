@@ -8,6 +8,8 @@ const root = __dirname;
 const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(root, 'data');
 const dbFile = path.join(dataDir, 'db.json');
 const courtsCacheFile = path.join(dataDir, 'courts-cache.json');
+const adminEmail = String(process.env.ADMIN_EMAIL || 'admin@teste.com').trim().toLowerCase();
+let adminEnsured = false;
 const types = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.png':'image/png', '.ico':'image/x-icon' };
 const courts = [
   {id:'parque-santana',name:'Parque Santana Ariano Suassuna',area:'Santana',lat:-8.0298,lon:-34.9147,light:true,surface:'Piso esportivo',open:'22h',source:'verified'},
@@ -19,9 +21,19 @@ const recifeOsmSnapshot=[
   {id:'osm-way-678531211',name:'Quadra de basquete — Torre',area:'Torre',lat:-8.0439104,lon:-34.9149406,light:false,surface:'Não informada',open:'Não informado',access:'yes',source:'osm'},
   {id:'osm-way-969854180',name:'Quadra da Igreja dos Mórmons',area:'Recife',lat:-8.0551282,lon:-34.8900594,light:false,surface:'Pavimentada',open:'Não informado',access:'permissive',hoops:'2',source:'osm'}
 ];
-function demoUsers(){return [['Ruan Deud','ruan@bastreet.demo','quadra123','Homem',184,'Armador',76,'player'],['João Guilherme','joao@bastreet.demo','quadra123','Homem',182,'Ala-armador',78,'player'],['Daniel Moura','daniel@bastreet.demo','quadra123','Homem',191,'Pivô',74,'player'],['Bárbara Menezes','barbara@bastreet.demo','quadra123','Mulher',177,'Ala',80,'player'],['Administrador BASTREET','admin@teste.com','admin123','Prefiro não informar',180,'Administrador',85,'admin']].map(([name,email,password,gender,height,position,skill,role])=>{const pass=secure(password);return {id:crypto.randomUUID(),name,email,passwordHash:pass.hash,salt:pass.salt,age:21,height,location:'Recife, PE',position,gender,level:'Intermediário',availability:['Ter','Qui','Sáb'],skill,xp:0,semesterPoints:0,role,createdAt:new Date().toISOString()}})}
+function adminSeed(){const password=process.env.ADMIN_PASSWORD;if(!password)return null;const pass=secure(password);return {id:crypto.randomUUID(),name:'Administrador BASTREET',email:adminEmail,passwordHash:pass.hash,salt:pass.salt,age:21,height:180,location:'Recife, PE',position:'Administrador',gender:'Prefiro não informar',level:'Intermediário',availability:['Ter','Qui','Sáb'],skill:85,xp:0,semesterPoints:0,role:'admin',createdAt:new Date().toISOString()}}
+function demoUsers(){return [['Ruan Deud','ruan@bastreet.demo','quadra123','Homem',184,'Armador',76],['João Guilherme','joao@bastreet.demo','quadra123','Homem',182,'Ala-armador',78],['Daniel Moura','daniel@bastreet.demo','quadra123','Homem',191,'Pivô',74],['Bárbara Menezes','barbara@bastreet.demo','quadra123','Mulher',177,'Ala',80]].map(([name,email,password,gender,height,position,skill])=>{const pass=secure(password);return {id:crypto.randomUUID(),name,email,passwordHash:pass.hash,salt:pass.salt,age:21,height,location:'Recife, PE',position,gender,level:'Intermediário',availability:['Ter','Qui','Sáb'],skill,xp:0,semesterPoints:0,role:'player',createdAt:new Date().toISOString()}})}
 function initialDb(){return {users:process.env.SEED_DEMO==='true'?demoUsers():[],sessions:[],trainings:[],checkins:[],messages:[{id:crypto.randomUUID(),userId:'bot',userName:'Rafael (bot)',text:'Bem-vindos ao grupo! Quem topa um treino hoje às 19h?',createdAt:new Date().toISOString()}],queue:[],matches:[],eventParticipants:[]}}
-function readDb(){if(!fs.existsSync(dataDir))fs.mkdirSync(dataDir,{recursive:true});if(!fs.existsSync(dbFile))fs.writeFileSync(dbFile,JSON.stringify(initialDb(),null,2));return JSON.parse(fs.readFileSync(dbFile,'utf8'))}
+function ensureAdmin(db){
+  if(adminEnsured)return false;
+  adminEnsured=true;
+  let user=db.users.find(item=>item.email===adminEmail),changed=false;
+  if(!user){user=adminSeed();if(user){db.users.push(user);changed=true}}
+  if(!user)return changed;
+  if(user.role!=='admin'){user.role='admin';changed=true}
+  return changed;
+}
+function readDb(){if(!fs.existsSync(dataDir))fs.mkdirSync(dataDir,{recursive:true});if(!fs.existsSync(dbFile))fs.writeFileSync(dbFile,JSON.stringify(initialDb(),null,2));const db=JSON.parse(fs.readFileSync(dbFile,'utf8'));if(ensureAdmin(db))writeDb(db);return db}
 function writeDb(db){const temp=`${dbFile}.tmp`;fs.writeFileSync(temp,JSON.stringify(db,null,2));fs.renameSync(temp,dbFile)}
 function json(res,status,value){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value))}
 function body(req){return new Promise((resolve,reject)=>{let data='';req.on('data',chunk=>{data+=chunk;if(data.length>1e6)reject(new Error('Payload grande'))});req.on('end',()=>{try{resolve(data?JSON.parse(data):{})}catch{reject(new Error('JSON inválido'))}})})}
