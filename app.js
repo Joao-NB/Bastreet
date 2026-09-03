@@ -86,7 +86,7 @@ function showPage(id) {
   pages.forEach(page => page.classList.toggle('active', page.id === id));
   document.querySelectorAll('.bottom-nav [data-page]').forEach(button => button.classList.toggle('active', button.dataset.page === id));
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  if(id==='quadras') startLiveLocation();
+  if(id==='quadras') openCourtsPage();
   if(id==='chat') loadMessages();
 }
 
@@ -151,18 +151,52 @@ document.querySelectorAll('.filter-chips button, .tabs button').forEach(button =
   button.parentElement.querySelectorAll('button').forEach(item => item.classList.remove('active')); button.classList.add('active');
 }));
 
+const regionalPreview=[
+  {id:'parque-santana',name:'Parque Santana Ariano Suassuna',area:'Santana',lat:-8.0298,lon:-34.9147,light:true,surface:'Piso esportivo',open:'22h',source:'verified'},
+  {id:'parque-jaqueira',name:'Parque da Jaqueira',area:'Jaqueira',lat:-8.0363,lon:-34.9045,light:true,surface:'Concreto',open:'22h',source:'verified'},
+  {id:'osm-way-580987421',name:'Quadra de basquete — Zona Oeste',area:'Recife',lat:-8.03396,lon:-34.951406,light:false,surface:'Não informada',open:'Não informado',source:'osm'},
+  {id:'osm-way-580987424',name:'Quadra de basquete — Cordeiro',area:'Cordeiro',lat:-8.036322,lon:-34.9471202,light:false,surface:'Não informada',open:'Não informado',source:'osm'},
+  {id:'osm-way-678531211',name:'Quadra de basquete — Torre',area:'Torre',lat:-8.0439104,lon:-34.9149406,light:false,surface:'Não informada',open:'Não informado',source:'osm'},
+  {id:'osm-way-969854180',name:'Quadra da Igreja dos Mórmons',area:'Recife',lat:-8.0551282,lon:-34.8900594,light:false,surface:'Pavimentada',open:'Não informado',source:'osm'}
+];
 let courts = [];
 let userLocation = {lat:-8.0476,lon:-34.9084};
-const courtsMap = L.map('courts-map',{zoomControl:false}).setView([userLocation.lat,userLocation.lon],13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(courtsMap);
-L.control.zoom({position:'topright'}).addTo(courtsMap);
-const courtMarkers=L.layerGroup().addTo(courtsMap);let userMarker;
+let courtsMap,courtMarkers,userMarker,courtsStarted=false,courtsRequest=0,regionalPreviewActive=false,hasLiveLocation=false,lastCourtLocation;
+
+function distanceKm(from,to){const rad=value=>value*Math.PI/180,a=Math.sin(rad(to.lat-from.lat)/2)**2+Math.cos(rad(from.lat))*Math.cos(rad(to.lat))*Math.sin(rad(to.lon-from.lon)/2)**2;return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+
+function ensureCourtsMap(){
+  if(courtsMap)return;
+  courtsMap=L.map('courts-map',{zoomControl:false,preferCanvas:true,fadeAnimation:false}).setView([-8.0084,-34.8911],12);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,maxNativeZoom:19,updateWhenIdle:true,keepBuffer:2,detectRetina:false,attribution:'&copy; OpenStreetMap contributors'}).addTo(courtsMap);
+  L.control.zoom({position:'topright'}).addTo(courtsMap);
+  courtMarkers=L.layerGroup().addTo(courtsMap);
+}
+
+function showRegionalPreview(){
+  regionalPreviewActive=true;
+  courts=regionalPreview.map(court=>({...court,players:0,distance:distanceKm(userLocation,court)}));
+  document.querySelector('#court-count').textContent=courts.length;
+  document.querySelector('#search-radius').textContent='25 km';
+  document.querySelector('#map-source').textContent='Base regional pronta • Recife e Olinda';
+  renderCourts(document.querySelector('#court-filter').value);
+  updateMap();
+}
+
+function openCourtsPage(){
+  ensureCourtsMap();
+  if(!courts.length)showRegionalPreview();
+  requestAnimationFrame(()=>courtsMap.invalidateSize());
+  if(!courtsStarted){courtsStarted=true;loadCourts()}
+  startLiveLocation();
+}
 
 function updateMap(){
+  ensureCourtsMap();
   courtMarkers.clearLayers();const bounds=[];
-  if(userMarker)userMarker.remove();userMarker=L.circleMarker([userLocation.lat,userLocation.lon],{radius:8,color:'#fff',weight:3,fillColor:'#2477ff',fillOpacity:1}).addTo(courtsMap).bindPopup('<strong>Você está aqui</strong>');bounds.push([userLocation.lat,userLocation.lon]);
+  if(userMarker){userMarker.remove();userMarker=undefined}if(hasLiveLocation){userMarker=L.circleMarker([userLocation.lat,userLocation.lon],{radius:8,color:'#fff',weight:3,fillColor:'#2477ff',fillOpacity:1}).addTo(courtsMap).bindPopup('<strong>Você está aqui</strong>');bounds.push([userLocation.lat,userLocation.lon])}
   courts.forEach(court=>{const icon=L.divIcon({className:'court-leaflet-icon',html:`<span>🏀</span>${court.source==='verified'?'<i>✓</i>':''}`,iconSize:[42,42],iconAnchor:[21,42]});L.marker([court.lat,court.lon],{icon}).addTo(courtMarkers).bindPopup(`<strong>${escapeHtml(court.name)}</strong><br><small>${court.distance.toFixed(1)} km • ${court.source==='verified'?'Verificada':'OpenStreetMap'}</small>`);bounds.push([court.lat,court.lon])});
-  if(bounds.length>1)courtsMap.fitBounds(bounds,{padding:[35,35],maxZoom:14});setTimeout(()=>courtsMap.invalidateSize(),80);
+  if(regionalPreviewActive&&!hasLiveLocation)courtsMap.fitBounds([[-8.12,-35.00],[-7.90,-34.78]],{padding:[20,20]});else if(bounds.length>1)courtsMap.fitBounds(bounds,{padding:[35,35],maxZoom:14});setTimeout(()=>courtsMap.invalidateSize(),30);
 }
 
 function renderCourts(sort = 'distance') {
@@ -173,8 +207,7 @@ function renderCourts(sort = 'distance') {
   document.querySelectorAll('.court-checkin').forEach(button => button.addEventListener('click', async()=>{try{await api(`/api/courts/${button.dataset.courtId}/checkin`,{method:'POST'});showToast('Presença registrada por 4 horas.');await loadCourts()}catch(error){showToast(error.message)}}));
 }
 
-async function loadCourts(lat=userLocation.lat,lon=userLocation.lon,refresh=false){try{document.querySelector('#map-source').textContent='Consultando quadras próximas...';const result=await api(`/api/courts?lat=${lat}&lon=${lon}${refresh?'&refresh=1':''}`);userLocation={lat,lon};courts=result.courts;document.querySelector('#court-count').textContent=courts.length;document.querySelector('#search-radius').textContent=`${result.meta.radius} km`;document.querySelector('#map-source').textContent=result.meta.stale?'Modo offline • cache + base verificada':result.meta.expanded?`Busca ampliada automaticamente • ${result.meta.osmResults} no OSM`:result.meta.cache?`Cache local • ${result.meta.osmResults} no OSM`:`Atualizado agora • ${result.meta.osmResults} no OSM`;renderCourts(document.querySelector('#court-filter').value);updateMap()}catch(error){document.querySelector('#map-source').textContent='Não foi possível atualizar agora';showToast(error.message)}}
-loadCourts();
+async function loadCourts(lat=userLocation.lat,lon=userLocation.lon,refresh=false){const request=++courtsRequest;try{document.querySelector('#map-source').textContent=refresh?'Atualizando dados em segundo plano...':'Ajustando resultados à sua região...';const result=await api(`/api/courts?lat=${lat}&lon=${lon}${refresh?'&refresh=1':''}`);if(request!==courtsRequest)return;userLocation={lat,lon};lastCourtLocation={lat,lon};regionalPreviewActive=false;courts=result.courts;document.querySelector('#court-count').textContent=courts.length;document.querySelector('#search-radius').textContent=`${result.meta.radius} km`;document.querySelector('#map-source').textContent=result.meta.refreshing?'Base regional pronta • atualização em segundo plano':result.meta.regional?'Base regional otimizada • Recife e Olinda':result.meta.stale?'Modo offline • cache + base verificada':result.meta.expanded?`Busca ampliada automaticamente • ${result.meta.osmResults} no OSM`:result.meta.cache?`Cache local • ${result.meta.osmResults} no OSM`:`Atualizado agora • ${result.meta.osmResults} no OSM`;renderCourts(document.querySelector('#court-filter').value);updateMap()}catch(error){if(request!==courtsRequest)return;document.querySelector('#map-source').textContent='Base regional ativa • atualização indisponível';showToast(error.message)}}
 document.querySelector('#court-filter').addEventListener('change', event => renderCourts(event.target.value));
 document.querySelector('#refresh-courts').addEventListener('click',()=>loadCourts(userLocation.lat,userLocation.lon,true));
 function startLiveLocation(){
@@ -183,10 +216,10 @@ function startLiveLocation(){
   if(locationWatch!==undefined)return;
   button.textContent='⌛ Solicitando GPS...';
   locationWatch=navigator.geolocation.watchPosition(position=>{
-    const now=Date.now(),lat=position.coords.latitude,lon=position.coords.longitude;button.textContent='● GPS em tempo real';button.classList.add('located');
+    const now=Date.now(),lat=position.coords.latitude,lon=position.coords.longitude,nextLocation={lat,lon},moved=!lastCourtLocation||distanceKm(lastCourtLocation,nextLocation)>.35;hasLiveLocation=true;userLocation=nextLocation;button.textContent='● GPS em tempo real';button.classList.add('located');
     document.querySelector('#location-label').textContent=`Sua posição está ativa • precisão aproximada de ${Math.round(position.coords.accuracy)} m`;
-    if(now-lastLocationUpdate>15000||lastLocationUpdate===0){lastLocationUpdate=now;loadCourts(lat,lon)}
-  },error=>{locationWatch=undefined;button.textContent='⌖ Permitir acesso ao GPS';document.querySelector('#location-label').textContent='GPS não autorizado. Usando Torre, Recife como referência.';loadCourts(-8.0476,-34.9084);showToast(error.code===1?'Permita o GPS nas configurações do navegador para resultados exatos.':'Não foi possível obter sua localização agora.')},{enableHighAccuracy:true,maximumAge:10000,timeout:12000});
+    if(moved&&(now-lastLocationUpdate>15000||lastLocationUpdate===0)){lastLocationUpdate=now;loadCourts(lat,lon)}else updateMap();
+  },error=>{locationWatch=undefined;button.textContent='⌖ Permitir acesso ao GPS';document.querySelector('#location-label').textContent='GPS não autorizado. Usando Torre, Recife como referência.';loadCourts(-8.0476,-34.9084);showToast(error.code===1?'Permita o GPS nas configurações do navegador para resultados exatos.':'Não foi possível obter sua localização agora.')},{enableHighAccuracy:false,maximumAge:300000,timeout:6000});
 }
 document.querySelector('#locate-me').addEventListener('click',startLiveLocation);
 

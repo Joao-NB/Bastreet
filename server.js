@@ -21,6 +21,8 @@ const recifeOsmSnapshot=[
   {id:'osm-way-678531211',name:'Quadra de basquete — Torre',area:'Torre',lat:-8.0439104,lon:-34.9149406,light:false,surface:'Não informada',open:'Não informado',access:'yes',source:'osm'},
   {id:'osm-way-969854180',name:'Quadra da Igreja dos Mórmons',area:'Recife',lat:-8.0551282,lon:-34.8900594,light:false,surface:'Pavimentada',open:'Não informado',access:'permissive',hoops:'2',source:'osm'}
 ];
+const metroCenter={lat:-8.0084,lon:-34.8911};
+const inRecifeOlinda=(lat,lon)=>km(lat,lon,metroCenter.lat,metroCenter.lon)<=40;
 function adminSeed(){const password=process.env.ADMIN_PASSWORD;if(!password)return null;const pass=secure(password);return {id:crypto.randomUUID(),name:'Administrador BASTREET',email:adminEmail,passwordHash:pass.hash,salt:pass.salt,age:21,height:180,location:'Recife, PE',position:'Administrador',gender:'Prefiro não informar',level:'Intermediário',availability:['Ter','Qui','Sáb'],skill:85,xp:0,semesterPoints:0,role:'admin',createdAt:new Date().toISOString()}}
 function demoUsers(){return [['Ruan Deud','ruan@bastreet.demo','quadra123','Homem',184,'Armador',76],['João Guilherme','joao@bastreet.demo','quadra123','Homem',182,'Ala-armador',78],['Daniel Moura','daniel@bastreet.demo','quadra123','Homem',191,'Pivô',74],['Bárbara Menezes','barbara@bastreet.demo','quadra123','Mulher',177,'Ala',80]].map(([name,email,password,gender,height,position,skill])=>{const pass=secure(password);return {id:crypto.randomUUID(),name,email,passwordHash:pass.hash,salt:pass.salt,age:21,height,location:'Recife, PE',position,gender,level:'Intermediário',availability:['Ter','Qui','Sáb'],skill,xp:0,semesterPoints:0,role:'player',createdAt:new Date().toISOString()}})}
 function initialDb(){return {users:process.env.SEED_DEMO==='true'?demoUsers():[],sessions:[],trainings:[],checkins:[],messages:[{id:crypto.randomUUID(),userId:'bot',userName:'Rafael (bot)',text:'Bem-vindos ao grupo! Quem topa um treino hoje às 19h?',createdAt:new Date().toISOString()}],queue:[],matches:[],eventParticipants:[]}}
@@ -50,9 +52,9 @@ async function searchOsmCourts(lat,lon,radius=8000,force=false){
   if(cache&&fresh&&sameArea&&enoughRadius&&!force)return {...cache,cache:true};
   const query=`[out:json][timeout:25];nwr(around:${radius},${lat},${lon})["sport"="basketball"];out center tags;`;
   try{
-    const endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];let data,lastError;
-    for(const endpoint of endpoints){try{const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'BASTREET-Academic-MVP/1.0'},body:`data=${encodeURIComponent(query)}`,signal:AbortSignal.timeout(28000)});if(!response.ok)throw new Error(`${response.status}`);data=await response.json();break}catch(error){lastError=error}}
-    if(!data)throw new Error(`Todos os provedores falharam: ${lastError?.message||'indisponível'}`);
+    const endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];
+    const requests=endpoints.map(async endpoint=>{const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'BASTREET-Academic-MVP/1.0'},body:`data=${encodeURIComponent(query)}`,signal:AbortSignal.timeout(9000)});if(!response.ok)throw new Error(`${endpoint}: ${response.status}`);return response.json()});
+    const data=await Promise.any(requests);
     const results=data.elements.map(item=>{const tags=item.tags||{},point=item.center||item;return {id:`osm-${item.type}-${item.id}`,name:tags.name||'Quadra de basquete',area:tags['addr:suburb']||tags['addr:neighbourhood']||'Região próxima',lat:point.lat,lon:point.lon,light:tags.lit==='yes',surface:tags.surface||'Não informada',open:tags.opening_hours||'Não informado',access:tags.access||'yes',hoops:tags.hoops||null,source:'osm'}}).filter(item=>Number.isFinite(item.lat)&&Number.isFinite(item.lon));
     const value={updatedAt:new Date().toISOString(),center:{lat,lon},radius,results};fs.writeFileSync(courtsCacheFile,JSON.stringify(value,null,2));return {...value,cache:false};
   }catch(error){console.error('Falha no Overpass:',error.message);if(cache&&sameArea)return {...cache,cache:true,stale:true};if(km(lat,lon,-8.0476,-34.9084)<30)return {updatedAt:'2026-09-01T00:00:00.000Z',center:{lat:-8.0476,lon:-34.9084},radius:25000,results:recifeOsmSnapshot,cache:true,stale:true};return {updatedAt:null,results:[],cache:true,stale:true}}
@@ -75,9 +77,21 @@ async function api(req,res,url){
   }
   if(method==='GET'&&url.pathname==='/api/me'){const user=requireUser(req,res,db);if(user)return json(res,200,{user:safe(user)});return}
   if(method==='GET'&&url.pathname==='/api/courts'){
-    const lat=Number(url.searchParams.get('lat'))||-8.0476,lon=Number(url.searchParams.get('lon'))||-34.9084,now=Date.now(),force=url.searchParams.get('refresh')==='1';db.checkins=db.checkins.filter(item=>now-new Date(item.createdAt).getTime()<14400000);writeDb(db);
-    let radius=Math.min(30000,Math.max(8000,Number(url.searchParams.get('radius'))||8000));let osm=await searchOsmCourts(lat,lon,radius,force);if(osm.results.length<3&&radius<25000){radius=25000;osm=await searchOsmCourts(lat,lon,radius,true)}const verified=courts.filter(court=>km(lat,lon,court.lat,court.lon)<=radius/1000);const seen=new Set(verified.map(court=>court.name.toLowerCase()));const merged=[...verified,...osm.results.filter(court=>!seen.has(court.name.toLowerCase()))];
-    return json(res,200,{courts:merged.map(court=>({...court,distance:km(lat,lon,court.lat,court.lon),players:db.checkins.filter(item=>item.courtId===court.id).length})).sort((a,b)=>a.distance-b.distance),meta:{cache:osm.cache,stale:Boolean(osm.stale),updatedAt:osm.updatedAt,osmResults:osm.results.length,radius:radius/1000,expanded:radius>8000}});
+    const lat=Number(url.searchParams.get('lat'))||-8.0476,lon=Number(url.searchParams.get('lon'))||-34.9084,now=Date.now(),force=url.searchParams.get('refresh')==='1',activeCheckins=db.checkins.filter(item=>now-new Date(item.createdAt).getTime()<14400000);if(activeCheckins.length!==db.checkins.length){db.checkins=activeCheckins;writeDb(db)}
+    let radius=Math.min(30000,Math.max(8000,Number(url.searchParams.get('radius'))||8000)),osm,regional=inRecifeOlinda(lat,lon),refreshing=false;
+    if(regional){
+      const cache=readCourtCache(),cachedMetro=cache?.center&&inRecifeOlinda(cache.center.lat,cache.center.lon)?cache.results:[];
+      const snapshot=[...recifeOsmSnapshot,...cachedMetro].filter((court,index,list)=>list.findIndex(item=>item.id===court.id)===index);
+      let nearby=snapshot.filter(court=>km(lat,lon,court.lat,court.lon)<=radius/1000);
+      if(nearby.length<3&&radius<25000){radius=25000;nearby=snapshot.filter(court=>km(lat,lon,court.lat,court.lon)<=25)}
+      osm={updatedAt:cache?.updatedAt||'2026-09-01T00:00:00.000Z',results:nearby,cache:true,regional:true};
+      if(force){refreshing=true;searchOsmCourts(lat,lon,radius,true).catch(error=>console.error('Atualização regional:',error.message))}
+    }else{
+      osm=await searchOsmCourts(lat,lon,radius,force);
+      if(osm.results.length<3&&radius<25000){radius=25000;osm=await searchOsmCourts(lat,lon,radius,true)}
+    }
+    const verified=courts.filter(court=>km(lat,lon,court.lat,court.lon)<=radius/1000),seen=new Set(verified.map(court=>court.name.toLowerCase())),merged=[...verified,...osm.results.filter(court=>!seen.has(court.name.toLowerCase()))];
+    return json(res,200,{courts:merged.map(court=>({...court,distance:km(lat,lon,court.lat,court.lon),players:db.checkins.filter(item=>item.courtId===court.id).length})).sort((a,b)=>a.distance-b.distance),meta:{cache:osm.cache,stale:Boolean(osm.stale),regional:Boolean(osm.regional),refreshing,updatedAt:osm.updatedAt,osmResults:osm.results.length,radius:radius/1000,expanded:radius>8000}});
   }
   const checkin=url.pathname.match(/^\/api\/courts\/([^/]+)\/checkin$/);
   if(method==='POST'&&checkin){const user=requireUser(req,res,db);if(!user)return;db.checkins=db.checkins.filter(item=>item.userId!==user.id);db.checkins.push({userId:user.id,userName:user.name,courtId:checkin[1],createdAt:new Date().toISOString()});writeDb(db);return json(res,200,{ok:true})}
@@ -96,5 +110,5 @@ async function api(req,res,url){
 
 http.createServer(async(req,res)=>{
   const url=new URL(req.url||'/',`http://${req.headers.host||'localhost'}`);try{if(url.pathname.startsWith('/api/'))return await api(req,res,url)}catch(error){console.error(error);return json(res,500,{error:'Erro interno do servidor.'})}
-  const relative=url.pathname==='/'?'index.html':decodeURIComponent(url.pathname).replace(/^\/+/,''),file=path.resolve(root,relative);if(!file.startsWith(root)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);res.end('Not found');return}if(relative==='index.html'){const protocol=String(req.headers['x-forwarded-proto']||'http').split(',')[0],host=String(req.headers.host||`localhost:${port}`).replace(/[^a-zA-Z0-9.:-]/g,''),base=`${protocol}://${host}`,html=fs.readFileSync(file,'utf8').replaceAll('__BASE_URL__',base);res.writeHead(200,{'Content-Type':types['.html']});res.end(html);return}res.writeHead(200,{'Content-Type':types[path.extname(file)]||'application/octet-stream'});fs.createReadStream(file).pipe(res);
+  const relative=url.pathname==='/'?'index.html':decodeURIComponent(url.pathname).replace(/^\/+/,''),file=path.resolve(root,relative);if(!file.startsWith(root)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);res.end('Not found');return}if(relative==='index.html'){const protocol=String(req.headers['x-forwarded-proto']||'http').split(',')[0],host=String(req.headers.host||`localhost:${port}`).replace(/[^a-zA-Z0-9.:-]/g,''),base=`${protocol}://${host}`,html=fs.readFileSync(file,'utf8').replaceAll('__BASE_URL__',base);res.writeHead(200,{'Content-Type':types['.html'],'Cache-Control':'no-cache'});res.end(html);return}const longCache=relative.startsWith('node_modules/')||relative.startsWith('assets/');res.writeHead(200,{'Content-Type':types[path.extname(file)]||'application/octet-stream','Cache-Control':longCache?'public, max-age=604800':'no-cache'});fs.createReadStream(file).pipe(res);
 }).listen(port,'0.0.0.0',()=>{const addresses=Object.values(os.networkInterfaces()).flat().filter(item=>item&&item.family==='IPv4'&&!item.internal).map(item=>`http://${item.address}:${port}`);console.log(`BASTREET local: http://localhost:${port}`);addresses.forEach(address=>console.log(`BASTREET na rede: ${address}`))});
