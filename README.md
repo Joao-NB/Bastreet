@@ -5,10 +5,11 @@ MVP responsivo de matchmaking de basquete por Elo, criado para o projeto de exte
 ## Executar
 
 1. Abra esta pasta no VS Code.
-2. No terminal, execute `npm run dev`.
-3. Acesse `http://localhost:4173`.
+2. No terminal, execute `npm ci`.
+3. Execute `npm run dev`.
+4. Acesse `http://localhost:4173`.
 
-Não é necessário instalar dependências. O protótipo usa HTML, CSS e JavaScript nativos.
+O frontend usa HTML, CSS, JavaScript e Leaflet. A API usa Node.js e o driver `pg` para PostgreSQL.
 
 ## Fluxos disponíveis
 
@@ -22,11 +23,11 @@ Não é necessário instalar dependências. O protótipo usa HTML, CSS e JavaScr
 - Conclua treinos individuais, acumule XP e mantenha uma sequência semanal.
 - Converse em um chat demonstrativo com respostas automáticas.
 
-Os dados agora são gravados pelo servidor local em `data/db.json`. Esse arquivo é ignorado pelo Git e criado automaticamente.
+Em produção, a variável `DATABASE_URL` ativa o PostgreSQL e torna persistentes usuários, perfis esportivos, disponibilidade, nível declarado, nível técnico, XP, ranking, sessões, treinos, mensagens, filas e partidas. A tabela operacional `bastreet_state` é criada automaticamente. Sem `DATABASE_URL`, o servidor usa `data/db.json` apenas para desenvolvimento local.
 
 ## Autenticação
 
-O login e o cadastro usam uma API real, hash de senha com `scrypt` e tokens de sessão. A implementação é adequada para uma demonstração acadêmica em rede local; produção ainda exige HTTPS, banco gerenciado, expiração de sessões e recuperação de senha.
+O login e o cadastro usam uma API real, hash de senha com `scrypt` e tokens de sessão. O cadastro armazena nome, idade, altura, localização, posição, gênero, nível declarado e dias disponíveis. O perfil passa a exibir os dados da conta autenticada. Expiração de sessões e recuperação de senha permanecem como evoluções posteriores.
 
 ## Regras de progressão do MVP
 
@@ -43,6 +44,6 @@ Execute `npm run demo:prepare` para restaurar as quatro contas da equipe e consu
 
 ## Deploy
 
-GitHub Pages não executa o backend Node.js e, portanto, não é mais adequado para esta versão. Um deploy público deve hospedar o servidor em Render, Railway ou Fly.io e substituir o arquivo JSON por PostgreSQL/Supabase. Para a apresentação presencial, a execução em rede local reduz dependência da internet e demonstra comunicação real entre dispositivos.
+O frontend e a API Node.js são publicados juntos no Render. O banco deve ser um PostgreSQL gerenciado externo, como Supabase ou Neon, conectado pela variável secreta `DATABASE_URL`.
 
-O arquivo `render.yaml` permite criar uma instância de demonstração diretamente a partir do GitHub. Ela inicializa as quatro contas do grupo automaticamente e possui verificação de saúde em `/api/health`. No plano gratuito do Render, os dados criados após a inicialização podem ser perdidos quando a instância reiniciar; persistência permanente requer PostgreSQL ou disco persistente.
+No Render, configure `DATABASE_URL` com a connection string do provedor e mantenha `DATABASE_SSL=true`. A aplicação cria a estrutura operacional automaticamente e a rota `/api/health` informa `database: postgresql` e `persistent: true`. A credencial nunca deve ser adicionada ao GitHub.

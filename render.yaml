@@ -17,3 +17,7 @@ services:
         value: admin@teste.com
       - key: ADMIN_PASSWORD
         sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: "true"

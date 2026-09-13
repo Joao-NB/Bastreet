@@ -77,9 +77,15 @@ document.querySelector('#brand-home').addEventListener('click', event => { event
 if (apiToken()) { authScreen.hidden = true; api('/api/me').then(result=>applyUser(result.user)).catch(()=>{localStorage.removeItem('bastreet-token');authScreen.hidden=false}); }
 
 function applyUser(user){
-  const first=user.name.split(' ')[0];document.querySelector('#welcome-title').innerHTML=`E aí, <span>${first}!</span><br>Pronto pro jogo?`;
-  document.querySelectorAll('.avatar-button span').forEach(item=>item.textContent=user.name.split(' ').map(part=>part[0]).slice(0,2).join('').toUpperCase());
-  document.querySelector('#profile-title').textContent=user.name;document.querySelector('#xp-value').textContent=user.xp||0;
+  const first=user.name.split(' ')[0],initials=user.name.split(' ').map(part=>part[0]).slice(0,2).join('').toUpperCase(),height=(Number(user.height||0)/100).toFixed(2).replace('.',','),availability=(user.availability||[]).map(day=>day.toLowerCase()).join(', ')||'não informada';
+  document.querySelector('#welcome-title').innerHTML=`E aí, <span>${escapeHtml(first)}!</span><br>Pronto pro jogo?`;
+  document.querySelectorAll('.avatar-button span').forEach(item=>item.textContent=initials);
+  document.querySelector('#profile-title').textContent=user.name;
+  document.querySelector('.profile-photo').firstChild.nodeValue=initials;
+  document.querySelector('#profile-summary').textContent=`⌖ ${user.location} • ${user.gender} • ${user.position} • ${height} m`;
+  document.querySelector('#profile-tags').innerHTML=`<span>${escapeHtml(user.level)}</span><span>Disponível: ${escapeHtml(availability)}</span><span>Nível técnico ${Number(user.skill)||60}</span>`;
+  document.querySelector('#profile-points').textContent=Number(user.semesterPoints||0).toLocaleString('pt-BR');
+  xp=Number(user.xp)||0;updateXp();
 }
 
 function showPage(id) {

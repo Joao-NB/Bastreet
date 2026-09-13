@@ -44,7 +44,7 @@
         <label>E-mail<input type="email" name="email" placeholder="voce@email.com" autocomplete="email" required><span class="field-error">Informe um e-mail válido.</span></label>
         <label>Senha<button type="button" class="forgot" data-toast="Enviaremos as instruções para seu e-mail">Esqueci minha senha</button><div class="password-field"><input type="password" name="password" placeholder="Sua senha" autocomplete="current-password" minlength="6" required><button type="button" class="toggle-password" aria-label="Exibir senha">◉</button></div><span class="field-error">Use pelo menos 6 caracteres.</span></label>
         <label class="check-label"><input type="checkbox"><span>Manter conectado</span></label>
-        <button class="primary-cta auth-submit" type="submit">Entrar na quadra <span>→</span></button><p class="demo-hint">Demonstração: use qualquer e-mail e senha com 6 caracteres.</p>
+        <button class="primary-cta auth-submit" type="submit">Entrar na quadra <span>→</span></button><p class="demo-hint">Entre com uma conta cadastrada ou crie seu perfil.</p>
       </form>
       <form class="auth-form" id="register-form" novalidate>
         <div class="register-progress"><i class="active"></i><i></i><span>Etapa <b id="step-number">1</b> de 2</span></div>
@@ -161,8 +161,8 @@
     </section>
 
     <section class="page" id="perfil" aria-labelledby="profile-title">
-      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p>⌖ Recife, PE • Homem • Ala-armador • 1,82 m</p><div class="tags"><span>Intermediário</span><span>Disponível: ter, qui e sáb</span><span>Nível 12</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
-      <div class="profile-grid"><div class="stat-panel"><span><small>PONTOS SEMESTRAIS</small><strong>1.240</strong></span><span><small>RANKING LOCAL</small><strong>#8</strong></span><span><small>PARTIDAS</small><strong>18</strong></span><span><small>TREINOS</small><strong>24</strong></span></div><div class="history-panel"><p class="eyebrow">ÚLTIMOS TREINOS</p><h2>Sua consistência</h2><div class="results"><i class="win">✓</i><i class="win">✓</i><i class="loss">—</i><i class="win">✓</i><i class="win">✓</i></div><p><strong>+86 pontos</strong> nesta semana</p></div></div>
+      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p id="profile-summary">⌖ Recife, PE • Homem • Ala-armador • 1,82 m</p><div class="tags" id="profile-tags"><span>Intermediário</span><span>Disponível: ter, qui e sáb</span><span>Nível técnico 78</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
+      <div class="profile-grid"><div class="stat-panel"><span><small>PONTOS SEMESTRAIS</small><strong id="profile-points">1.240</strong></span><span><small>RANKING LOCAL</small><strong>#8</strong></span><span><small>PARTIDAS</small><strong>18</strong></span><span><small>TREINOS</small><strong>24</strong></span></div><div class="history-panel"><p class="eyebrow">ÚLTIMOS TREINOS</p><h2>Sua consistência</h2><div class="results"><i class="win">✓</i><i class="win">✓</i><i class="loss">—</i><i class="win">✓</i><i class="win">✓</i></div><p><strong>+86 pontos</strong> nesta semana</p></div></div>
       <button class="logout-button" id="logout-button">Sair da conta</button>
     </section>
   </main>

@@ -9,6 +9,7 @@
     "demo:prepare": "node scripts/prepare-demo.js"
   },
   "dependencies": {
-    "leaflet": "^1.9.4"
+    "leaflet": "^1.9.4",
+    "pg": "^8.23.0"
   }
 }
