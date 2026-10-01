@@ -33,7 +33,7 @@
   <section class="auth-screen" id="auth-screen" aria-label="Acesso ao BASTREET">
     <div class="auth-visual">
       <a class="brand auth-brand" href="#"><span class="brand-ball">●</span><span>BA<span>STREET</span></span></a>
-      <div class="auth-pitch"><p class="eyebrow">ENCONTRE. JOGUE. EVOLUA.</p><h1>A quadra<br><span>te espera.</span></h1><p>Partidas equilibradas, gente do seu nível e evolução a cada jogo.</p><div class="auth-proof"><span><strong>2.4k</strong><small>jogadores</small></span><span><strong>380+</strong><small>partidas</small></span><span><strong>12</strong><small>quadras</small></span></div></div>
+      <div class="auth-pitch"><p class="eyebrow">ENCONTRE. JOGUE. EVOLUA.</p><h1>A quadra<br><span>te espera.</span></h1><p>Encontre cinco jogadores reais, forme times 3 × 3 e combine o jogo perto do grupo.</p><div class="auth-proof"><span><strong>6</strong><small>jogadores por partida</small></span><span><strong>3 × 3</strong><small>em quadra</small></span><span><strong>1</strong><small>chat privado</small></span></div></div>
       <div class="auth-ball" aria-hidden="true">🏀</div>
     </div>
     <div class="auth-panel"><div class="auth-box">
@@ -42,8 +42,7 @@
       <div class="auth-tabs"><button class="active" data-auth-tab="login">Entrar</button><button data-auth-tab="register">Criar conta</button></div>
       <form class="auth-form active" id="login-form" novalidate>
         <label>E-mail<input type="email" name="email" placeholder="voce@email.com" autocomplete="email" required><span class="field-error">Informe um e-mail válido.</span></label>
-        <label>Senha<button type="button" class="forgot" data-toast="Enviaremos as instruções para seu e-mail">Esqueci minha senha</button><div class="password-field"><input type="password" name="password" placeholder="Sua senha" autocomplete="current-password" minlength="6" required><button type="button" class="toggle-password" aria-label="Exibir senha">◉</button></div><span class="field-error">Use pelo menos 6 caracteres.</span></label>
-        <label class="check-label"><input type="checkbox"><span>Manter conectado</span></label>
+        <label>Senha<div class="password-field"><input type="password" name="password" placeholder="Sua senha" autocomplete="current-password" minlength="6" required><button type="button" class="toggle-password" aria-label="Exibir senha">◉</button></div><span class="field-error">Use pelo menos 6 caracteres.</span></label>
         <button class="primary-cta auth-submit" type="submit">Entrar na quadra <span>→</span></button><p class="demo-hint">Entre com uma conta cadastrada ou crie seu perfil.</p>
       </form>
       <form class="auth-form" id="register-form" novalidate>
@@ -55,11 +54,11 @@
         </div>
         <div class="register-step" data-step="2">
           <div class="field-pair"><label>Posição<select name="position" required><option value="">Selecione</option><option>Armador</option><option>Ala-armador</option><option>Ala</option><option>Ala-pivô</option><option>Pivô</option></select><span class="field-error">Escolha sua posição.</span></label><label>Gênero<select name="gender" required><option value="">Selecione</option><option>Mulher</option><option>Homem</option><option>Não binário</option><option>Prefiro não informar</option></select><span class="field-error">Selecione uma opção.</span></label></div>
-          <label>Nível de jogo<select name="level" required><option value="">Selecione</option><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select><span class="field-error">Escolha seu nível.</span></label>
+          <p class="register-level-note">Você começa no nível 0. Jogos e treinos fazem seu perfil evoluir.</p>
           <fieldset class="day-picker"><legend>Dias disponíveis</legend><label><input type="checkbox" checked>Ter</label><label><input type="checkbox">Qua</label><label><input type="checkbox" checked>Qui</label><label><input type="checkbox" checked>Sáb</label><label><input type="checkbox">Dom</label></fieldset>
           <label>E-mail<input type="email" name="email" placeholder="voce@email.com" required><span class="field-error">Informe um e-mail válido.</span></label>
           <label>Crie uma senha<div class="password-field"><input type="password" name="password" placeholder="Mínimo de 6 caracteres" minlength="6" required><button type="button" class="toggle-password">◉</button></div><span class="field-error">Use pelo menos 6 caracteres.</span></label>
-          <label class="check-label"><input type="checkbox" required><span>Li e aceito os termos de uso e privacidade.</span></label><button class="primary-cta auth-submit" type="submit">Criar meu perfil <span>→</span></button>
+          <button class="primary-cta auth-submit" type="submit">Criar meu perfil <span>→</span></button>
         </div>
       </form>
     </div></div>
@@ -80,9 +79,9 @@
         <div class="hero-copy">
           <p class="eyebrow">RECIFE • PE</p>
           <h1 id="welcome-title">E aí, <span>João!</span><br>Pronto pro jogo?</h1>
-          <p class="hero-subtitle">Encontre sua próxima partida, jogue com pessoas do seu nível e suba no ranking.</p>
+          <p class="hero-subtitle">Entre na fila com a comunidade. Com seis jogadores, montamos dois times de três e encontramos uma quadra perto do grupo.</p>
           <button class="primary-cta" id="find-match"><span>Buscar partida</span><span class="arrow">↗</span></button>
-          <div class="online"><i></i><strong>27 jogadores</strong> buscando agora perto de você</div>
+          <div class="online"><i></i><strong id="home-queue-count">0 jogadores</strong> buscando partida agora</div>
         </div>
         <div class="hero-art" aria-hidden="true">
           <div class="court-lines"></div><div class="big-ball">🏀</div><span class="scribble">BORA!</span>
@@ -93,45 +92,34 @@
         <div>
           <div class="section-heading"><div><p class="eyebrow">ESCOLHA SEU RITMO</p><h2>Modos de jogo</h2></div></div>
           <div class="mode-grid">
-            <button class="mode-card selected" data-mode="normal"><span class="mode-icon">◎</span><span><strong>Partida normal</strong><small>Equilibrada pelo seu Elo</small></span><em>Recomendado</em></button>
-            <button class="mode-card" data-mode="rapida"><span class="mode-icon">ϟ</span><span><strong>Partida rápida</strong><small>Entre em quadra mais rápido</small></span></button>
-            <button class="mode-card" data-mode="personalizada"><span class="mode-icon">♙</span><span><strong>Personalizada</strong><small>Crie e convide seus amigos</small></span></button>
+            <button class="mode-card selected" data-mode="normal"><span class="mode-icon">◎</span><span><strong>Buscar partida</strong><small>6 jogadores reais • 3 × 3</small></span><em>Ao vivo</em></button>
           </div>
         </div>
 
         <aside class="elo-card">
-          <div class="elo-top"><span class="rank-badge">12</span><span><small>NÍVEL TÉCNICO</small><strong>78</strong></span><span class="trend">↗ 4</span></div>
-          <div class="progress-label"><span>Nível 12</span><span>76% para o nível 13</span></div>
+          <div class="elo-top"><span class="rank-badge" id="home-level">1</span><span><small>NÍVEL TÉCNICO</small><strong id="home-skill">0</strong></span></div>
+          <div class="progress-label"><span id="home-level-label">Nível 1</span><span id="home-xp-label">0% para o nível 2</span></div>
           <div class="progress"><i></i></div>
-          <div class="elo-stats"><span><strong>18</strong><small>Partidas</small></span><span><strong>11</strong><small>Vitórias</small></span><span><strong>61%</strong><small>Aproveitamento</small></span></div>
+          <div class="elo-stats"><span><strong id="home-matches-count">0</strong><small>Partidas</small></span><span><strong id="home-training-count">0</strong><small>Treinos</small></span><span><strong id="home-points-count">0</strong><small>Pontos</small></span></div>
         </aside>
       </div>
 
       <section class="nearby">
         <div class="section-heading"><div><p class="eyebrow">NA SUA REGIÃO</p><h2>Próximas partidas</h2></div><button class="text-button" data-page="partidas">Ver todas →</button></div>
-        <div class="match-list">
-          <article class="match-card" data-event-card="beira-mar"><div class="date-block"><strong>HOJE</strong><span>19:30</span></div><div class="match-info"><h3>Basquete no Parque Santana</h3><p>⌖ Parque Santana • Recife</p><div class="tags"><span>Normal</span><span>Nível intermediário</span></div></div><div class="players"><div class="avatar-stack"><i>R</i><i>M</i><i>L</i><i>+3</i></div><span><strong class="event-count">6/10</strong><small>jogadores</small></span></div><button class="join-button event-join" data-event="beira-mar">Entrar</button></article>
-          <article class="match-card"><div class="date-block"><strong>AMANHÃ</strong><span>18:00</span></div><div class="match-info"><h3>Racha da Jaqueira</h3><p>⌖ Parque da Jaqueira • Recife</p><div class="tags"><span>Rápida</span><span>Todos os níveis</span></div></div><div class="players"><div class="avatar-stack"><i>A</i><i>B</i><i>+5</i></div><span><strong>7/10</strong><small>jogadores</small></span></div><button class="join-button" data-toast="Você entrou no Racha da Jaqueira!">Entrar</button></article>
-        </div>
+        <div class="match-list" id="home-matches"><p class="empty-note">Nenhuma partida formada ainda. Entre na fila para começar.</p></div>
       </section>
     </section>
 
     <section class="page" id="partidas" aria-labelledby="matches-title">
       <p class="eyebrow">SUA JORNADA</p><h1 class="page-title" id="matches-title">Partidas</h1>
-      <div class="tabs"><button class="active">Próximas</button><button>Histórico</button><button>Convites <b>2</b></button></div>
-      <div class="featured-match"><div><span class="status-pill">CONFIRMADA</span><p>Hoje • 19:30</p><h2>Basquete no Parque Santana</h2><p>⌖ Parque Santana, Recife</p></div><div class="versus"><span>TIME A</span><strong>VS</strong><span>TIME B</span></div><button class="primary-cta compact" data-toast="Abrindo detalhes da partida...">Ver partida <span>→</span></button></div>
+      <p class="page-lead">Partidas formadas por seis jogadores reais. Confirme sua presença e combine os detalhes no chat do grupo.</p>
+      <div id="matches-list" class="match-results"></div>
+      <div id="match-details" class="match-details" hidden></div>
     </section>
 
     <section class="page" id="ranking" aria-labelledby="ranking-title">
       <p class="eyebrow">CAMPEONATO SEMESTRAL</p><h1 class="page-title" id="ranking-title">Ranking</h1><p class="page-lead">Sua posição semestral cresce com presença e consistência. Treinos coletivos valem mais pontos por promoverem convivência e jogo real.</p>
-      <div class="filter-chips"><button class="active">Minha cidade</button><button>Geral</button><button>Amigos</button></div>
-      <div class="podium"><div class="podium-player second"><div class="photo">PD</div><strong>Pedro</strong><span>1.487</span><i>2</i></div><div class="podium-player first"><div class="crown">♛</div><div class="photo">JP</div><strong>João P.</strong><span>1.520</span><i>1</i></div><div class="podium-player third"><div class="photo">RF</div><strong>Rafael</strong><span>1.452</span><i>3</i></div></div>
-      <div class="ranking-list" id="ranking-list">
-        <div class="rank-row current"><b>8</b><span class="mini-avatar">JG</span><span><strong>João Guilherme</strong><small>Ala-armador • Você</small></span><em>1.240 ELO</em><i>↗ 2</i></div>
-        <div class="rank-row"><b>4</b><span class="mini-avatar">LS</span><span><strong>Lucas Santos</strong><small>Pivô</small></span><em>1.410 ELO</em><i>—</i></div>
-        <div class="rank-row"><b>5</b><span class="mini-avatar">BM</span><span><strong>Bruno Melo</strong><small>Armador</small></span><em>1.398 ELO</em><i>↗ 1</i></div>
-        <div class="rank-row"><b>6</b><span class="mini-avatar">CA</span><span><strong>Caio Alves</strong><small>Ala</small></span><em>1.355 ELO</em><i>↘ 1</i></div>
-      </div>
+      <div class="ranking-list" id="ranking-list"><p class="empty-note">Conclua jogos ou treinos para entrar no ranking.</p></div>
     </section>
 
     <section class="page" id="quadras" aria-labelledby="courts-title">
@@ -140,29 +128,26 @@
         <div class="map-sim" aria-label="Mapa real de quadras próximas"><div id="courts-map"></div><div class="map-distance">Raio de busca: <strong id="search-radius">8 km</strong><small id="map-source">GPS + OpenStreetMap</small></div></div>
         <div class="court-results"><div class="result-toolbar"><strong><span id="court-count">3</span> quadras encontradas</strong><div><button id="refresh-courts" title="Atualizar OpenStreetMap">↻</button><select id="court-filter"><option value="distance">Mais próximas</option><option value="activity">Mais jogadores</option><option value="lighting">Com iluminação</option><option value="verified">Verificadas</option></select></div></div><div id="court-list"></div></div>
       </div>
-      <section class="team-builder"><div class="team-builder-head"><div><p class="eyebrow">FORMAÇÃO INTELIGENTE</p><h2>Monte times equilibrados</h2><p>Cruzamos nível técnico, altura, gênero e disponibilidade. O ranking semestral não interfere no equilíbrio da partida.</p></div><button class="primary-cta" id="build-teams">Simular times <span>↗</span></button></div><div class="availability"><span>Disponibilidade em comum</span><button class="active">Terça • 19h</button><button>Quinta • 20h</button><button>Sábado • 16h</button></div><div class="team-output" id="team-output"><div class="empty-teams"><span>◎</span><p>Selecione um horário e simule o cruzamento de 10 perfis.</p></div></div></section>
+      <section class="team-builder"><div class="team-builder-head"><div><p class="eyebrow">PARTIDA REAL</p><h2>Jogue com a comunidade</h2><p>Seis pessoas entram na fila para formar dois times de três. A quadra é escolhida pela região cadastrada no perfil.</p></div><button class="primary-cta" id="build-teams">Buscar partida <span>↗</span></button></div></section>
     </section>
 
     <section class="page" id="treinos" aria-labelledby="training-title">
-      <div class="training-hero"><div><p class="eyebrow">EVOLUA TODO DIA</p><h1 class="page-title" id="training-title">Meus treinos</h1><p>Treine onde estiver, mantenha sua sequência e chegue mais preparado para jogar em grupo.</p></div><div class="level-ring"><span><small>NÍVEL</small><strong id="player-level">12</strong></span></div><div class="xp-block"><span><strong id="xp-value">760</strong> / 1.000 XP</span><div><i id="xp-bar"></i></div><small>240 XP para o nível 13</small></div></div>
-      <div class="training-summary"><span><strong id="streak-value">🔥 6 dias</strong><small>Sequência atual</small></span><span><strong>4 / 5</strong><small>Meta semanal</small></span><span><strong>+86</strong><small>Pontos semestrais</small></span><span class="group-boost"><strong>2× pontos</strong><small>Em treino coletivo</small></span></div>
-      <div class="section-heading training-heading"><div><p class="eyebrow">PLANO DE HOJE</p><h2>Treinos individuais</h2></div><div class="filter-chips"><button class="active">Todos</button><button>Em casa</button><button>Na quadra</button></div></div>
-      <div class="workout-grid" id="workout-grid">
-        <article class="workout-card" data-xp="40"><div class="workout-icon">◌</div><span class="workout-place">EM CASA</span><h3>Controle de bola</h3><p>5 séries de dribles alternados, baixo e cruzado.</p><div><span>◷ 12 min</span><strong>+40 XP</strong></div><button class="start-workout">Iniciar treino</button></article>
-        <article class="workout-card" data-xp="60"><div class="workout-icon">↗</div><span class="workout-place">QUALQUER LUGAR</span><h3>Explosão e agilidade</h3><p>Circuito curto para velocidade lateral e arranque.</p><div><span>◷ 18 min</span><strong>+60 XP</strong></div><button class="start-workout">Iniciar treino</button></article>
-        <article class="workout-card featured-workout" data-xp="90"><div class="workout-icon">◎</div><span class="workout-place">NA QUADRA</span><h3>Finalizações</h3><p>Bandejas com as duas mãos e arremessos de curta distância.</p><div><span>◷ 25 min</span><strong>+90 XP</strong></div><button class="start-workout">Iniciar treino</button></article>
-      </div>
-      <div class="group-callout"><span>👥</span><div><p class="eyebrow">PROGRESSÃO COMUNITÁRIA</p><h2>Treinar junto leva você mais longe</h2><p>Treinos em grupo encontrados pelas Quadras geram XP e o dobro de pontos para o ranking semestral.</p></div><button class="secondary-button" data-page="quadras">Encontrar grupo</button></div>
+      <div class="training-hero"><div><p class="eyebrow">EVOLUA TODO DIA</p><h1 class="page-title" id="training-title">Meus treinos</h1><p>Treine onde estiver, mantenha sua sequência e chegue mais preparado para jogar em grupo.</p></div><div class="level-ring"><span><small>NÍVEL</small><strong id="player-level">0</strong></span></div><div class="xp-block"><span><strong id="xp-value">0</strong> / 1.000 XP</span><div><i id="xp-bar"></i></div><small>XP para o próximo nível</small></div></div>
+      <div class="training-summary"><span><strong id="weekly-progress">0 / 5</strong><small>Treinos nesta semana</small></span><span><strong>3 treinos</strong><small>Liberam Intermediário</small></span><span><strong>5 treinos</strong><small>Liberam Avançado</small></span><span><strong id="training-total">0</strong><small>Treinos concluídos</small></span></div>
+      <div class="section-heading training-heading"><div><p class="eyebrow">PLANO DE HOJE</p><h2>Treinos por dificuldade</h2></div></div>
+      <div class="workout-grid" id="workout-grid"></div>
+      <section class="training-ranking"><p class="eyebrow">DESTAQUES</p><h2>Ranking de treinos</h2><div id="training-ranking-list"></div></section>
     </section>
 
     <section class="page" id="chat" aria-labelledby="chat-title">
       <p class="eyebrow">ORGANIZE O JOGO</p><h1 class="page-title" id="chat-title">Mensagens</h1>
-      <div class="chat-shell"><aside class="chat-list"><div class="chat-search">⌕ <input placeholder="Buscar conversa"></div><button class="chat-person active" data-chat="racha"><span class="mini-avatar">RB</span><span><strong>Basquete Recife</strong><small>Rafael: Fechado então! 🏀</small></span><i>2</i></button><button class="chat-person" data-chat="mari"><span class="mini-avatar">MC</span><span><strong>Mariana Costa</strong><small>Vamos treinar quinta?</small></span></button><button class="chat-person" data-chat="pedro"><span class="mini-avatar">PS</span><span><strong>Pedro Silva</strong><small>Você: valeu pelo jogo!</small></span></button></aside><section class="chat-panel"><header><span class="mini-avatar">RB</span><span><strong id="chat-name">Basquete Recife</strong><small><i></i> 6 membros online</small></span></header><div class="messages" id="messages"><div class="date-divider">Hoje</div><div class="bubble bot"><b>Rafael</b>Galera, treino confirmado hoje às 19:30?<small>17:42</small></div><div class="bubble user">Por mim fechado! Quem leva a bola?<small>17:44</small></div><div class="bubble bot"><b>Mariana</b>Eu levo. Encontro vocês na entrada da quadra 🙌<small>17:45</small></div></div><form class="chat-compose" id="chat-form"><button type="button" aria-label="Anexar">＋</button><input id="chat-input" placeholder="Pergunte sobre horário, vaga, quadra ou treino..." autocomplete="off"><button type="submit" aria-label="Enviar">➤</button></form></section></div>
+      <div class="chat-shell"><aside class="chat-list" id="chat-list"></aside><section class="chat-panel"><header><span class="mini-avatar" id="chat-avatar">🌐</span><span><strong id="chat-name">Comunidade BASTREET</strong><small id="chat-subtitle">Conversa global</small></span></header><div class="messages" id="messages"></div><form class="chat-compose" id="chat-form"><input id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off" maxlength="500"><button type="submit" aria-label="Enviar">➤</button></form></section></div>
     </section>
 
     <section class="page" id="perfil" aria-labelledby="profile-title">
-      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">João Guilherme</h1><p id="profile-summary">⌖ Recife, PE • Homem • Ala-armador • 1,82 m</p><div class="tags" id="profile-tags"><span>Intermediário</span><span>Disponível: ter, qui e sáb</span><span>Nível técnico 78</span></div></div><button class="secondary-button" data-toast="Edição de perfil pronta para a próxima etapa">Editar perfil</button></div>
-      <div class="profile-grid"><div class="stat-panel"><span><small>PONTOS SEMESTRAIS</small><strong id="profile-points">1.240</strong></span><span><small>RANKING LOCAL</small><strong>#8</strong></span><span><small>PARTIDAS</small><strong>18</strong></span><span><small>TREINOS</small><strong>24</strong></span></div><div class="history-panel"><p class="eyebrow">ÚLTIMOS TREINOS</p><h2>Sua consistência</h2><div class="results"><i class="win">✓</i><i class="win">✓</i><i class="loss">—</i><i class="win">✓</i><i class="win">✓</i></div><p><strong>+86 pontos</strong> nesta semana</p></div></div>
+      <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">Seu perfil</h1><p id="profile-summary">⌖ Sua cidade</p><div class="tags" id="profile-tags"><span>Nível 0</span></div></div><button class="secondary-button" id="edit-profile">Editar cidade</button></div>
+      <form id="profile-edit-form" class="profile-edit-form" hidden><label>Cidade onde você mora<input id="profile-location" name="location" required maxlength="100" placeholder="Ex.: Olinda, PE"></label><button class="primary-cta" type="submit">Salvar cidade</button></form>
+      <div class="profile-grid"><div class="stat-panel"><span><small>PONTOS SEMESTRAIS</small><strong id="profile-points">0</strong></span><span><small>RANKING LOCAL</small><strong id="profile-rank">0</strong></span><span><small>PARTIDAS</small><strong id="profile-matches">0</strong></span><span><small>TREINOS</small><strong id="profile-trainings">0</strong></span></div><div class="history-panel"><p class="eyebrow">SUA EVOLUÇÃO</p><h2>Comece a jogar</h2><p>Busque uma partida ou conclua um treino para acompanhar seu progresso aqui.</p></div></div>
       <button class="logout-button" id="logout-button">Sair da conta</button>
     </section>
   </main>
@@ -174,11 +159,10 @@
   <div class="match-overlay" id="match-overlay" aria-hidden="true">
     <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
       <button class="close-modal" id="close-modal" aria-label="Fechar">×</button>
-      <div class="searching-state" id="searching-state"><div class="radar"><span>🏀</span><i></i><i></i><i></i></div><p class="eyebrow">MATCHMAKING ATIVO</p><h2 id="search-title">Cruzando perfis...</h2><p>Buscando atletas compatíveis por <strong>nível, altura e disponibilidade</strong> em um raio de 8 km.</p><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong>4</strong><small>mínimo para a demo</small></span></div><button class="secondary-button" id="cancel-search">Cancelar busca</button></div>
-      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p>Hoje, 19:30 • Parque Santana</p><div class="team-balance"><div><small>TIME A</small><strong>77</strong><span>Nível médio</span></div><b>VS</b><div><small>TIME B</small><strong>78</strong><span>Nível médio</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button><small class="deadline">Confirme em até 45 segundos</small></div>
+      <div class="searching-state" id="searching-state"><div class="radar"><span>🏀</span><i></i><i></i><i></i></div><p class="eyebrow">FILA AO VIVO</p><h2 id="search-title">Buscando partida...</h2><p id="queue-description">Aguardando seis jogadores reais.</p><div id="queue-players" class="queue-players"></div><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong id="queue-needed">6</strong><small>jogadores para jogar</small></span></div><button class="secondary-button" id="cancel-search">Sair da fila</button></div>
+      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p></p><div class="team-balance"><div><small>TIME LARANJA</small><strong>3</strong><span>jogadores</span></div><b>VS</b><div><small>TIME PRETO</small><strong>3</strong><span>jogadores</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button></div>
     </div>
   </div>
-  <div class="match-overlay" id="custom-overlay" aria-hidden="true"><div class="search-modal custom-modal" role="dialog" aria-modal="true"><button class="close-modal" id="close-custom" aria-label="Fechar">×</button><p class="eyebrow">CRIAR PARTIDA</p><h2>Personalizada</h2><form id="custom-match-form"><label>Nome da partida<input name="name" placeholder="Ex.: Racha da turma" required></label><div class="field-pair"><label>Data<input name="date" type="date" required></label><label>Horário<input name="time" type="time" required></label></div><label>Quadra<select name="court"><option>Parque Santana</option><option>Parque da Jaqueira</option><option>Outra quadra do mapa</option></select></label><div class="field-pair"><label>Formato<select name="format"><option>2 × 2</option><option>3 × 3</option><option>5 × 5</option></select></label><label>Tipo<select name="type"><option>Misto</option><option>Livre</option></select></label></div><button class="primary-cta auth-submit" type="submit">Criar e convidar <span>→</span></button></form></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="node_modules/leaflet/dist/leaflet.js"></script>
   <script src="app.js"></script>

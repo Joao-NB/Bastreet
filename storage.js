@@ -17,7 +17,15 @@ function createFileStore(file, initialState) {
     async write(value) {
       const temporary = `${file}.tmp`;
       fs.writeFileSync(temporary, JSON.stringify(value, null, 2));
-      fs.renameSync(temporary, file);
+      for (let attempt = 0; attempt < 8; attempt++) {
+        try {
+          await fs.promises.rename(temporary, file);
+          return;
+        } catch (error) {
+          if (!['EPERM', 'EACCES', 'EBUSY'].includes(error.code) || attempt === 7) throw error;
+          await new Promise(resolve => setTimeout(resolve, 75 * (attempt + 1)));
+        }
+      }
     },
     async health() {
       return true;

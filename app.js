@@ -8,6 +8,10 @@ const toast = document.querySelector('#toast');
 let matchTimeout;
 let timerInterval;
 let matchPoll;
+let currentMatch=null;
+let lastNotifiedMatchId=null;
+let activeChat='global';
+let ownUserId='';
 let elapsed = 0;
 let locationWatch;
 let lastLocationUpdate = 0;
@@ -72,87 +76,115 @@ document.querySelector('#register-form').addEventListener('submit', async event 
   catch(error){showToast(error.message)}
 });
 document.querySelectorAll('.toggle-password').forEach(button => button.addEventListener('click', () => { const input = button.parentElement.querySelector('input'); input.type = input.type === 'password' ? 'text' : 'password'; button.textContent = input.type === 'password' ? '◉' : '◌'; }));
-document.querySelector('#logout-button').addEventListener('click', () => { localStorage.removeItem('bastreet-session'); localStorage.removeItem('bastreet-token'); authScreen.hidden = false; setAuthTab('login'); });
+document.querySelector('#logout-button').addEventListener('click', () => { if(searchingState&&!searchingState.hidden)api('/api/matchmaking/leave',{method:'POST'}).catch(()=>{});closeMatchmaking(false);localStorage.removeItem('bastreet-session'); localStorage.removeItem('bastreet-token'); authScreen.hidden = false; setAuthTab('login'); });
 document.querySelector('#brand-home').addEventListener('click', event => { event.preventDefault(); showPage('inicio'); history.replaceState(null, '', '#inicio'); });
-if (apiToken()) { authScreen.hidden = true; api('/api/me').then(result=>applyUser(result.user)).catch(()=>{localStorage.removeItem('bastreet-token');authScreen.hidden=false}); }
+if (apiToken()) { authScreen.hidden = true; api('/api/me').then(result=>applyUser(result.user,result.stats)).catch(()=>{localStorage.removeItem('bastreet-token');authScreen.hidden=false}); }
 
-function applyUser(user){
+function applyUser(user,stats){
+  ownUserId=user.id;
   const first=user.name.split(' ')[0],initials=user.name.split(' ').map(part=>part[0]).slice(0,2).join('').toUpperCase(),height=(Number(user.height||0)/100).toFixed(2).replace('.',','),availability=(user.availability||[]).map(day=>day.toLowerCase()).join(', ')||'não informada';
   document.querySelector('#welcome-title').innerHTML=`E aí, <span>${escapeHtml(first)}!</span><br>Pronto pro jogo?`;
+  document.querySelector('.hero-copy .eyebrow').textContent=user.location||'SUA REGIÃO';
   document.querySelectorAll('.avatar-button span').forEach(item=>item.textContent=initials);
   document.querySelector('#profile-title').textContent=user.name;
   document.querySelector('.profile-photo').firstChild.nodeValue=initials;
   document.querySelector('#profile-summary').textContent=`⌖ ${user.location} • ${user.gender} • ${user.position} • ${height} m`;
-  document.querySelector('#profile-tags').innerHTML=`<span>${escapeHtml(user.level)}</span><span>Disponível: ${escapeHtml(availability)}</span><span>Nível técnico ${Number(user.skill)||60}</span>`;
-  document.querySelector('#profile-points').textContent=Number(user.semesterPoints||0).toLocaleString('pt-BR');
-  xp=Number(user.xp)||0;updateXp();
+  document.querySelector('#profile-location').value=user.location||'';
+  const safeSkill = Number(user.skill ?? 0);
+  document.querySelector('#profile-tags').innerHTML=`<span>Nível ${Number(user.level||0)}</span><span>Disponível: ${escapeHtml(availability)}</span><span>Nível técnico ${safeSkill}</span>`;
+  document.querySelector('#profile-points').textContent=Number(user.semesterPoints ?? 0).toLocaleString('pt-BR');
+  document.querySelector('#home-skill').textContent=Number(user.skill||0);
+  document.querySelector('#home-points-count').textContent=Number(user.semesterPoints||0);
+  xp=Number(user.xp ?? 0);updateXp();
+  if(stats)applyStats(stats);else refreshProfile();
+  loadMatches();loadTraining();loadChats();loadQueueCount();loadRanking();
 }
+function applyStats(stats){document.querySelector('#profile-rank').textContent=stats.rank?`#${stats.rank}`:'0';document.querySelector('#profile-matches').textContent=stats.matches;document.querySelector('#profile-trainings').textContent=stats.trainings;document.querySelector('#home-matches-count').textContent=stats.matches;document.querySelector('#home-training-count').textContent=stats.trainings;const active=stats.matches+stats.trainings>0;document.querySelector('.history-panel h2').textContent=active?'Sua evolução':'Comece a jogar';document.querySelector('.history-panel p:last-child').textContent=active?`${stats.matches} partida${stats.matches===1?'':'s'} jogada${stats.matches===1?'':'s'} e ${stats.trainings} treino${stats.trainings===1?'':'s'} concluído${stats.trainings===1?'':'s'}.`:'Busque uma partida ou conclua um treino para acompanhar seu progresso aqui.'}
+document.querySelector('#edit-profile').addEventListener('click',()=>{const form=document.querySelector('#profile-edit-form');form.hidden=!form.hidden;if(!form.hidden)document.querySelector('#profile-location').focus()});
+document.querySelector('#profile-edit-form').addEventListener('submit',async event=>{event.preventDefault();try{const result=await api('/api/me',{method:'PATCH',body:JSON.stringify({location:document.querySelector('#profile-location').value})});document.querySelector('#profile-edit-form').hidden=true;applyUser(result.user);showToast('Cidade atualizada no perfil.')}catch(error){showToast(error.message)}});
+async function refreshProfile(){try{const result=await api('/api/me');applyStats(result.stats);document.querySelector('#profile-points').textContent=Number(result.user.semesterPoints||0).toLocaleString('pt-BR');document.querySelector('#home-points-count').textContent=result.user.semesterPoints||0}catch{}}
+async function loadQueueCount(){try{const state=await api('/api/matchmaking/status');document.querySelector('#home-queue-count').textContent=`${state.waiting} jogador${state.waiting===1?'':'es'}`;if(state.match&&!overlay.classList.contains('open')){currentMatch=state.match;if(lastNotifiedMatchId!==state.match.id){lastNotifiedMatchId=state.match.id;showToast('Sua partida está pronta! Confira em Partidas.')}}}catch{}}
 
 function showPage(id) {
   pages.forEach(page => page.classList.toggle('active', page.id === id));
   document.querySelectorAll('.bottom-nav [data-page]').forEach(button => button.classList.toggle('active', button.dataset.page === id));
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if(id==='quadras') openCourtsPage();
-  if(id==='chat') loadMessages();
+  if(id==='chat') loadChats();
+  if(id==='partidas') loadMatches();
+  if(id==='treinos') loadTraining();
 }
 
 navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
 
 document.querySelectorAll('[data-mode]').forEach(card => card.addEventListener('click', () => {
   document.querySelectorAll('[data-mode]').forEach(item => item.classList.remove('selected'));
-  card.classList.add('selected');
-  if(card.dataset.mode==='personalizada')openCustomMatch();else openMatchmaking(card.dataset.mode);
+  card.classList.add('selected');openMatchmaking();
 }));
 
-async function openMatchmaking(mode='normal') {
+function updateQueue(state){document.querySelector('#queue-needed').textContent=state.needed;document.querySelector('#queue-description').innerHTML=`<strong>${state.waiting}/${state.needed} jogadores reais</strong> na fila. Cada pessoa precisa entrar com sua própria conta.`;document.querySelector('#queue-players').innerHTML=(state.players||[]).map(player=>`<span>🏀 ${escapeHtml(player.name)} <small>${escapeHtml(player.location)}</small></span>`).join('');document.querySelector('#home-queue-count').textContent=`${state.waiting} jogador${state.waiting===1?'':'es'}`}
+async function openMatchmaking() {
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   searchingState.hidden = false;
   foundState.hidden = true;
   elapsed = 0;
   timerLabel.textContent = '00:00';
-  document.querySelector('#search-title').textContent=mode==='rapida'?'Buscando o jogo mais próximo...':'Cruzando perfis...';
+  document.querySelector('#search-title').textContent='Buscando partida...';
   clearTimeout(matchTimeout); clearInterval(timerInterval); clearInterval(matchPoll);
-  timerInterval = setInterval(() => { elapsed += 1; timerLabel.textContent = `00:${String(elapsed).padStart(2, '0')}`; }, 1000);
+  timerInterval = setInterval(() => { elapsed += 1; timerLabel.textContent = `${String(Math.floor(elapsed/60)).padStart(2,'0')}:${String(elapsed%60).padStart(2,'0')}`; }, 1000);
   try {
-    const slot=mode==='rapida'?'Primeiro horário disponível':document.querySelector('.availability button.active')?.textContent||'Terça • 19h';const result=await api('/api/matchmaking/join',{method:'POST',body:JSON.stringify({slot,mode})});
-    searchingState.querySelector('p:not(.eyebrow)').innerHTML=`<strong>${result.waiting}/${result.needed} pessoas reais</strong> na fila. Abra outras contas nos celulares do grupo.`;
+    const result=await api('/api/matchmaking/join',{method:'POST',body:JSON.stringify({slot:'Primeiro horário disponível'})});
+    updateQueue(result);
     if(result.match)return showRealMatch(result.match);
-    matchPoll=setInterval(async()=>{try{const status=await api('/api/matchmaking/status');if(status.match)showRealMatch(status.match);else searchingState.querySelector('p:not(.eyebrow)').innerHTML=`<strong>${status.waiting}/${status.needed} pessoas reais</strong> na fila. Aguardando o grupo...`;}catch{}},2500);
-  } catch(error){closeMatchmaking();showToast(error.message)}
+    matchPoll=setInterval(async()=>{try{const status=await api('/api/matchmaking/heartbeat',{method:'POST'});if(status.match)showRealMatch(status.match);else if(status.queued)updateQueue(status);else{closeMatchmaking(false);showToast('Sua busca expirou. Entre na fila novamente.')}}catch(error){showToast(error.message)}},4000);
+  } catch(error){closeMatchmaking(false);showToast(error.message)}
 }
 
-function showRealMatch(match){clearInterval(matchPoll);clearInterval(timerInterval);searchingState.hidden=true;foundState.hidden=false;const averages=match.teams.map(team=>Math.round(team.reduce((sum,user)=>sum+user.skill,0)/team.length));const panels=foundState.querySelectorAll('.team-balance div');panels[0].querySelector('strong').textContent=averages[0];panels[1].querySelector('strong').textContent=averages[1];foundState.querySelector('p:not(.eyebrow)').textContent=`Agora • ${match.court.name} • ${match.teams.flat().length} participantes reais`;}
+function showRealMatch(match){currentMatch=match;clearInterval(matchPoll);clearInterval(timerInterval);searchingState.hidden=true;foundState.hidden=false;const panels=foundState.querySelectorAll('.team-balance div');panels[0].querySelector('strong').textContent=match.teams[0].length;panels[1].querySelector('strong').textContent=match.teams[1].length;foundState.querySelector('p:not(.eyebrow)').textContent=`${match.slot} • ${match.court.name} • ${match.region}`;
+  if (match.court) {
+    const selectedCourt = { ...match.court, players: match.teams.flat().length, distance: distanceKm(userLocation, match.court) };
+    courts = [selectedCourt, ...courts.filter(court => court.id !== selectedCourt.id)];
+    document.querySelector('#court-count').textContent = Math.max(1, courts.length);
+    renderCourts(document.querySelector('#court-filter').value);
+    updateMap();
+  }
+}
 
-function closeMatchmaking() {
+function closeMatchmaking(leave=true) {
+  if(leave&&overlay.classList.contains('open')&&!searchingState.hidden)api('/api/matchmaking/leave',{method:'POST'}).catch(()=>{});
   overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true');
   clearTimeout(matchTimeout); clearInterval(timerInterval); clearInterval(matchPoll);
 }
 
-document.querySelector('#find-match').addEventListener('click',()=>openMatchmaking('normal'));
-document.querySelector('#nav-match').addEventListener('click',()=>openMatchmaking('normal'));
-document.querySelector('#close-modal').addEventListener('click', closeMatchmaking);
-document.querySelector('#cancel-search').addEventListener('click', closeMatchmaking);
-document.querySelector('#confirm-match').addEventListener('click', () => { closeMatchmaking(); showPage('partidas'); showToast('Presença confirmada! Nos vemos na quadra 🏀'); });
+document.querySelector('#find-match').addEventListener('click',openMatchmaking);
+document.querySelector('#nav-match').addEventListener('click',openMatchmaking);
+document.querySelector('#close-modal').addEventListener('click',()=>closeMatchmaking());
+document.querySelector('#cancel-search').addEventListener('click',()=>closeMatchmaking());
+document.querySelector('#confirm-match').addEventListener('click',async()=>{if(!currentMatch)return;try{await api(`/api/matches/${currentMatch.id}/confirm`,{method:'POST'});closeMatchmaking(false);showPage('partidas');showMatchDetails(currentMatch.id);refreshProfile();showToast('Presença confirmada! Veja a quadra e o chat da partida.')}catch(error){showToast(error.message)}});
 overlay.addEventListener('click', event => { if (event.target === overlay) closeMatchmaking(); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMatchmaking(); });
+
+let myMatches=[];
+async function loadMatches(){if(!apiToken())return;try{const result=await api('/api/matches');myMatches=result.matches;const render=match=>`<article class="featured-match"><div><span class="status-pill">${match.completed?.includes(ownUserId)?'PARTIDA JOGADA':match.confirmed?.includes(ownUserId)?'PRESENÇA CONFIRMADA':'AGUARDANDO SUA CONFIRMAÇÃO'}</span><p>${escapeHtml(match.slot)}</p><h2>Partida 3 × 3</h2><p>⌖ ${escapeHtml(match.court.name)} • ${escapeHtml(match.region||'Região próxima')}</p></div><div class="versus"><span>TIME LARANJA</span><strong>VS</strong><span>TIME PRETO</span></div><button class="primary-cta compact" data-match-id="${match.id}">Ver partida <span>→</span></button></article>`;document.querySelector('#matches-list').innerHTML=myMatches.length?myMatches.map(render).join(''):'<div class="empty-note">Você ainda não tem partidas. Entre na fila com outros cinco jogadores.</div>';document.querySelector('#home-matches').innerHTML=myMatches.length?myMatches.slice(0,2).map(render).join(''):'<p class="empty-note">Nenhuma partida formada ainda. Entre na fila para começar.</p>';document.querySelectorAll('[data-match-id]').forEach(button=>button.addEventListener('click',()=>{showPage('partidas');showMatchDetails(button.dataset.matchId)}))}catch(error){showToast(error.message)}}
+function showMatchDetails(id){
+  const match=myMatches.find(item=>item.id===id)||currentMatch;
+  if(!match)return;
+  const detail=document.querySelector('#match-details'),confirmed=match.confirmed?.includes(ownUserId),completed=match.completed?.includes(ownUserId),allConfirmed=(match.confirmed||[]).length===6;
+  detail.hidden=false;
+  detail.innerHTML=`<div class="detail-head"><div><p class="eyebrow">PARTIDA 3 × 3 • ${escapeHtml(match.region||'REGIÃO')}</p><h2>${escapeHtml(match.court.name)}</h2><p>${escapeHtml(match.slot)} • ${escapeHtml(match.court.area)} • ${match.confirmed?.length||0}/6 presenças confirmadas</p></div><button class="secondary-button" id="close-details">Fechar</button></div><div class="detail-teams">${match.teams.map((team,index)=>`<div><h3>TIME ${index===0?'LARANJA':'PRETO'}</h3>${team.map(player=>`<p>🏀 ${escapeHtml(player.name)} <small>${escapeHtml(player.location)}</small></p>`).join('')}</div>`).join('')}</div><div class="detail-actions">${confirmed?'':'<button class="primary-cta" id="detail-confirm">Confirmar presença</button>'}${confirmed&&allConfirmed&&!completed?'<button class="primary-cta" id="detail-complete">Registrar jogo concluído</button>':''}<a class="secondary-button" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(match.court.lat+','+match.court.lon)}">Ir para a quadra no Maps ↗</a><button class="secondary-button" id="detail-chat">Abrir chat privado ↗</button></div><p class="court-caveat">${completed?'Jogo registrado: +100 XP e +50 pontos.':confirmed&&!allConfirmed?'Aguarde as seis confirmações. Após jogar, registre sua participação aqui.':'Confira horário e acesso da quadra com o grupo antes de sair.'}</p>`;
+  document.querySelector('#close-details').onclick=()=>detail.hidden=true;
+  document.querySelector('#detail-chat').onclick=()=>{activeChat=match.id;showPage('chat')};
+  document.querySelector('#detail-confirm')?.addEventListener('click',async()=>{try{await api(`/api/matches/${match.id}/confirm`,{method:'POST'});await loadMatches();showMatchDetails(match.id);refreshProfile()}catch(error){showToast(error.message)}});
+  document.querySelector('#detail-complete')?.addEventListener('click',async()=>{try{const result=await api(`/api/matches/${match.id}/complete`,{method:'POST'});xp=result.user.xp;updateXp();document.querySelector('#profile-tags span:first-child').textContent=`Nível ${result.user.level}`;document.querySelector('#home-skill').textContent=result.user.skill;await loadMatches();showMatchDetails(match.id);refreshProfile();loadRanking();showToast('Partida registrada: +100 XP e +50 pontos.')}catch(error){showToast(error.message)}});
+}
 
 function showToast(message) {
   toast.textContent = message; toast.classList.add('show');
   clearTimeout(showToast.timeout); showToast.timeout = setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
-const customOverlay=document.querySelector('#custom-overlay');
-function openCustomMatch(){customOverlay.classList.add('open');customOverlay.setAttribute('aria-hidden','false')}
-function closeCustomMatch(){customOverlay.classList.remove('open');customOverlay.setAttribute('aria-hidden','true')}
-document.querySelector('#close-custom').addEventListener('click',closeCustomMatch);
-customOverlay.addEventListener('click',event=>{if(event.target===customOverlay)closeCustomMatch()});
-document.querySelector('#custom-match-form').addEventListener('submit',async event=>{event.preventDefault();const data=Object.fromEntries(new FormData(event.currentTarget));try{await api('/api/messages',{method:'POST',body:JSON.stringify({text:`Convite: ${data.name} • ${data.date} às ${data.time} • ${data.court} • ${data.format}`})});closeCustomMatch();event.currentTarget.reset();showPage('chat');showToast('Partida criada e convite enviado ao grupo!')}catch(error){showToast(error.message)}});
-
 document.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', () => showToast(button.dataset.toast)));
-document.querySelectorAll('.event-join').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;button.textContent='Entrando...';try{const result=await api(`/api/events/${button.dataset.event}/join`,{method:'POST'});const count=Math.min(10,6+result.count);document.querySelector(`[data-event-card="${button.dataset.event}"] .event-count`).textContent=`${count}/10`;button.textContent='✓ Confirmado';button.classList.add('joined');showToast('Sua vaga está confirmada! A partida foi adicionada em Partidas.');setTimeout(()=>showPage('partidas'),900)}catch(error){button.disabled=false;button.textContent='Entrar';showToast(error.message)}}));
-async function loadEventStatus(){try{const result=await api('/api/events/beira-mar');const count=Math.min(10,6+result.participants.length);document.querySelector('[data-event-card="beira-mar"] .event-count').textContent=`${count}/10`}catch{}}
-loadEventStatus();
 document.querySelectorAll('.filter-chips button, .tabs button').forEach(button => button.addEventListener('click', () => {
   button.parentElement.querySelectorAll('button').forEach(item => item.classList.remove('active')); button.classList.add('active');
 }));
@@ -233,43 +265,24 @@ function startLiveLocation(){
 }
 document.querySelector('#locate-me').addEventListener('click',startLiveLocation);
 
-const players = [
-  {n:'João', s:78, h:182, g:'H', p:'Ala-armador'}, {n:'Mariana', s:82, h:176, g:'M', p:'Armadora'},
-  {n:'Rafael', s:75, h:190, g:'H', p:'Pivô'}, {n:'Bárbara', s:76, h:181, g:'M', p:'Ala'},
-  {n:'Pedro', s:84, h:186, g:'H', p:'Ala'}, {n:'Luana', s:70, h:169, g:'M', p:'Armadora'},
-  {n:'Bruno', s:72, h:194, g:'H', p:'Pivô'}, {n:'Camila', s:79, h:178, g:'M', p:'Ala-pivô'},
-  {n:'Lucas', s:80, h:188, g:'H', p:'Ala-pivô'}, {n:'Ana', s:74, h:172, g:'M', p:'Ala-armadora'}
-];
-
-function playerRow(player) { return `<li><span class="mini-avatar">${player.n.slice(0,2).toUpperCase()}</span><span><strong>${player.n}</strong><small>${player.p} • ${player.h / 100} m • ${player.g}</small></span><em>${player.s} nível</em></li>`; }
-document.querySelector('#build-teams').addEventListener('click', () => {
-  const sorted = [...players].sort((a,b) => b.s - a.s); const teams = [[],[]]; let totals = [0,0];
-  sorted.forEach(player => { const target = totals[0] <= totals[1] ? 0 : 1; teams[target].push(player); totals[target] += player.s; });
-  const average = team => Math.round(team.reduce((sum,p) => sum + p.s,0) / team.length);
-  document.querySelector('#team-output').innerHTML = `<div class="formed-team"><header><span>TIME LARANJA</span><strong>Nível médio ${average(teams[0])}</strong></header><ul>${teams[0].map(playerRow).join('')}</ul></div><div class="balance-score"><span>98%</span><small>equilíbrio</small><i>✓</i></div><div class="formed-team blue"><header><span>TIME PRETO</span><strong>Nível médio ${average(teams[1])}</strong></header><ul>${teams[1].map(playerRow).join('')}</ul></div>`;
-  showToast('10 perfis compatíveis encontrados!');
-});
-document.querySelectorAll('.availability button').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.availability button').forEach(item => item.classList.remove('active')); button.classList.add('active'); }));
-
-let xp = 0;
-function updateXp() { document.querySelector('#xp-value').textContent = xp; document.querySelector('#xp-bar').style.width = `${Math.min(100, xp / 10)}%`; }
+document.querySelector('#build-teams').addEventListener('click',openMatchmaking);
+let xp=0,workoutTimer=null,activeWorkout=null;
+function updateXp(){const level=Math.floor(xp/1000),progress=xp%1000,percent=Math.round(progress/10);document.querySelector('#xp-value').textContent=progress;document.querySelector('#xp-bar').style.width=`${percent}%`;document.querySelector('#player-level').textContent=level;document.querySelector('.level-ring').style.background=`conic-gradient(var(--orange) 0 ${percent}%,#37302b ${percent}%)`;document.querySelector('#home-level').textContent=level;document.querySelector('#home-level-label').textContent=`Nível ${level}`;document.querySelector('#home-xp-label').textContent=`${percent}% para o nível ${level+1}`;document.querySelector('.elo-card .progress i').style.width=`${percent}%`}
 updateXp();
-document.querySelectorAll('.start-workout').forEach((button,index) => button.addEventListener('click', () => {
-  const card = button.closest('.workout-card'); const gain = Number(card.dataset.xp);
-  if (card.classList.contains('done')) { showToast('Este treino já foi concluído hoje.'); return; }
-  button.textContent = 'Treino em andamento...'; button.disabled = true;
-  setTimeout(async() => { try{const result=await api('/api/trainings',{method:'POST',body:JSON.stringify({workoutId:`individual-${index+1}`,xp:gain,collective:false})});xp=result.user.xp;updateXp();card.classList.add('done');button.textContent='✓ Concluído hoje';showToast(`Salvo: +${result.xp} XP e +${result.points} pontos`)}catch(error){button.disabled=false;button.textContent='Iniciar treino';showToast(error.message)} }, 900);
-}));
+const workoutDescriptions={'controle-bola':'Alterne a mão a cada quique. Mantenha os joelhos flexionados e os olhos à frente.','passe-parede':'Passe a bola contra uma parede e receba com as duas mãos, mantendo o tronco firme.','agilidade':'Desloque-se lateralmente entre os cones e acelere na volta.','finalizacoes':'Aproxime-se da cesta em dois passos e finalize alternando as mãos.'};
+function workoutVisual(id){const common='<circle class="head" cx="57" cy="29" r="10"/><path class="athlete" d="M57 40 L57 75 M57 51 L34 66 M57 51 L81 63 M57 75 L41 105 M57 75 L78 105"/>';const extras={
+  'controle-bola':'<circle class="ball" cx="87" cy="83" r="12"/><path class="guide" d="M87 69 L87 103"/>',
+  'passe-parede':'<path class="guide" d="M132 16 L132 110 M130 38 L151 38 M130 67 L151 67"/><circle class="ball" cx="104" cy="61" r="12"/>',
+  'agilidade':'<path class="guide" d="M20 112 L28 93 L36 112 M92 112 L100 93 L108 112 M140 112 L148 93 L156 112"/><circle class="ball" cx="87" cy="83" r="11"/>',
+  'finalizacoes':'<path class="guide" d="M128 36 L160 36 M140 36 L140 50 M125 50 L155 50 M128 50 L132 69 M152 50 L148 69"/><circle class="ball" cx="103" cy="41" r="12"/>'};return `<svg class="workout-visual ${id}" viewBox="0 0 180 125" role="img" aria-label="Ilustração do exercício ${escapeHtml(id.replaceAll('-',' '))}"><rect x="1" y="1" width="178" height="123" rx="14"/>${common}${extras[id]}</svg>`}
+async function loadTraining(){if(!apiToken())return;try{const result=await api('/api/trainings'),{state,workouts,ranking}=result;document.querySelector('#weekly-progress').textContent=`${state.weekly} / ${state.goal}`;document.querySelector('#training-total').textContent=state.sessions;const order=['controle-bola','passe-parede','agilidade','finalizacoes'];document.querySelector('#workout-grid').innerHTML=order.map(id=>{const workout=workouts[id],done=state.today.includes(id),locked=!state.unlocked[workout.difficulty],target=workout.difficulty==='Intermediário'?3:5;return `<article class="workout-card ${done?'done':''} ${locked?'locked':''}" data-workout="${id}">${workoutVisual(id)}<span class="workout-place">${escapeHtml(workout.difficulty.toUpperCase())}</span><h3>${escapeHtml(workout.name)}</h3><p>${escapeHtml(workoutDescriptions[id])}</p><div class="workout-meta"><span>◷ ${Math.ceil(workout.seconds/60)} min</span><strong>+${workout.xp} XP</strong></div><div class="workout-clock" aria-live="polite">${activeWorkout?.id===id?'Em andamento':'Tempo do exercício: '+workout.seconds+' s'}</div><button class="start-workout" ${done||locked||activeWorkout?'disabled':''}>${done?'✓ Concluído hoje':locked?`🔒 Libera com ${target} treinos na semana`:'Iniciar treino'}</button></article>`}).join('');document.querySelectorAll('.start-workout:not([disabled])').forEach(button=>button.addEventListener('click',()=>startWorkout(button.closest('[data-workout]').dataset.workout)));document.querySelector('#training-ranking-list').innerHTML=Object.entries(ranking).map(([difficulty,players])=>`<div class="training-rank-group"><h3>${escapeHtml(difficulty)}</h3>${players.length?players.map((player,index)=>`<p><span>${index+1}. ${escapeHtml(player.name)}</span><strong>${player.completed} treino${player.completed===1?'':'s'}</strong></p>`).join(''):'<p>Sem treinos concluídos nessa dificuldade.</p>'}</div>`).join('');if(result.inProgress)runWorkoutTimer({id:result.inProgress.workoutId,startedAt:result.inProgress.startedAt,seconds:result.inProgress.seconds})}catch(error){showToast(error.message)}}
+async function startWorkout(id){try{const result=await api('/api/trainings/start',{method:'POST',body:JSON.stringify({workoutId:id})});runWorkoutTimer({id,startedAt:result.startedAt,seconds:result.seconds})}catch(error){showToast(error.message)}}
+function runWorkoutTimer(workout){activeWorkout=workout;document.querySelectorAll('.start-workout').forEach(button=>button.disabled=true);clearInterval(workoutTimer);const tick=()=>{if(!activeWorkout)return;const remaining=Math.max(0,activeWorkout.seconds-Math.floor((Date.now()-new Date(activeWorkout.startedAt).getTime())/1000)),card=document.querySelector(`[data-workout="${workout.id}"]`);if(card){card.classList.add('running');card.querySelector('.workout-clock').textContent=remaining?`Tempo restante: ${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(remaining%60).padStart(2,'0')}`:'Tempo concluído. Confirme o exercício.';const button=card.querySelector('.start-workout');button.textContent=remaining?'Treino em andamento...':'Concluir treino';if(!remaining&&button.disabled){const finishButton=button.cloneNode(true);finishButton.disabled=false;button.replaceWith(finishButton);finishButton.addEventListener('click',()=>finishWorkout(workout.id))}}if(!remaining)clearInterval(workoutTimer)};workoutTimer=setInterval(tick,1000);tick()}
+async function finishWorkout(id){const button=document.querySelector(`[data-workout="${id}"] .start-workout`);if(button){button.disabled=true;button.textContent='Salvando...'}try{const result=await api('/api/trainings',{method:'POST',body:JSON.stringify({workoutId:id})});xp=result.user.xp;updateXp();document.querySelector('#profile-tags span:first-child').textContent=`Nível ${result.user.level}`;document.querySelector('#home-skill').textContent=result.user.skill;activeWorkout=null;await loadTraining();refreshProfile();loadRanking();showToast(`Treino concluído: +${result.xp} XP e +${result.points} pontos`)}catch(error){activeWorkout=null;await loadTraining();showToast(error.message)}}
 
-const botReplies = ['Fechado! Vou confirmar minha presença agora 🏀','Boa! Tem mais duas vagas no treino de quinta.','Perfeito. A quadra está livre a partir das 19h.','Bora! Levo a bola e encontro vocês lá.'];
-document.querySelector('#chat-form').addEventListener('submit', async event => {
-  event.preventDefault(); const input = document.querySelector('#chat-input'); const text = input.value.trim(); if (!text) return;
-  input.value='';try{await api('/api/messages',{method:'POST',body:JSON.stringify({text})});await loadMessages()}catch(error){showToast(error.message)}
-});
-
-function escapeHtml(value){const node=document.createElement('span');node.textContent=value;return node.innerHTML}
-async function loadMessages(){try{const result=await api('/api/messages'),ownId=(await api('/api/me').catch(()=>({user:{id:''}}))).user.id;document.querySelector('#messages').innerHTML='<div class="date-divider">Hoje • atualiza automaticamente</div>'+result.messages.map(message=>`<div class="bubble ${message.userId===ownId?'user':'bot'}"><b>${escapeHtml(message.userName)}</b>${escapeHtml(message.text)}<small>${new Date(message.createdAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</small></div>`).join('');const box=document.querySelector('#messages');box.scrollTop=box.scrollHeight}catch{}}
-loadMessages();setInterval(()=>{if(document.querySelector('#chat').classList.contains('active'))loadMessages()},3000);
-
-async function loadRanking(){try{const result=await api('/api/ranking');if(!result.users.length)return;document.querySelector('#ranking-list').innerHTML=result.users.map((user,index)=>`<div class="rank-row"><b>${index+1}</b><span class="mini-avatar">${user.name.split(' ').map(part=>part[0]).slice(0,2).join('').toUpperCase()}</span><span><strong>${escapeHtml(user.name)}</strong><small>${escapeHtml(user.position)} • nível técnico ${user.skill}</small></span><em>${user.semesterPoints} PTS</em><i>${index<3?'★':'—'}</i></div>`).join('')}catch{}}
-loadRanking();
+function escapeHtml(value){const node=document.createElement('span');node.textContent=String(value??'');return node.innerHTML}
+async function loadChats(){if(!apiToken())return;try{const result=await api('/api/chats');if(!result.chats.some(chat=>chat.id===activeChat))activeChat='global';document.querySelector('#chat-list').innerHTML=result.chats.map(chat=>`<button class="chat-person ${chat.type==='private'?'private-chat':'global-chat'} ${activeChat===chat.id?'active':''}" data-chat="${chat.id}"><span class="mini-avatar">${chat.type==='global'?'🌐':'🏀'}</span><span><strong>${escapeHtml(chat.name)}</strong><small>${chat.type==='global'?'Aberto à comunidade':`${chat.members} membros • ${escapeHtml(chat.court)}`}</small></span></button>`).join('');document.querySelectorAll('#chat-list [data-chat]').forEach(button=>button.addEventListener('click',()=>{activeChat=button.dataset.chat;loadChats()}));const selected=result.chats.find(chat=>chat.id===activeChat);document.querySelector('#chat-name').textContent=selected.name;document.querySelector('#chat-avatar').textContent=selected.type==='global'?'🌐':'🏀';document.querySelector('#chat-subtitle').textContent=selected.type==='global'?'Conversa global da comunidade':`Chat privado • ${selected.members} membros da partida`;document.querySelector('.chat-panel').classList.toggle('private-room',selected.type==='private');await loadMessages()}catch(error){showToast(error.message)}}
+async function loadMessages(){if(!apiToken())return;try{const chatId=activeChat,result=await api(`/api/chats/${encodeURIComponent(chatId)}/messages`);if(chatId!==activeChat)return;const box=document.querySelector('#messages'),wasNearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;box.innerHTML=result.messages.length?result.messages.map(message=>`<div class="bubble ${message.userId===ownUserId?'user':'bot'}"><b>${escapeHtml(message.userName)}</b>${escapeHtml(message.text)}<small>${new Date(message.createdAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</small></div>`).join(''):'<div class="chat-empty">Nenhuma mensagem ainda. Comece a conversa com jogadores reais.</div>';if(wasNearBottom)box.scrollTop=box.scrollHeight}catch{}}
+document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input'),message=input.value.trim();if(!message)return;try{await api(`/api/chats/${encodeURIComponent(activeChat)}/messages`,{method:'POST',body:JSON.stringify({text:message})});input.value='';await loadMessages()}catch(error){showToast(error.message)}});
+setInterval(()=>{if(document.querySelector('#chat').classList.contains('active'))loadMessages();if(apiToken())loadQueueCount()},5000);
+async function loadRanking(){if(!apiToken())return;try{const result=await api('/api/ranking');const users=result.users.filter(user=>user.role!=='admin');document.querySelector('#ranking-list').innerHTML=users.length?users.map((user,index)=>`<div class="rank-row ${user.id===ownUserId?'current':''}"><b>${index+1}</b><span class="mini-avatar">${escapeHtml(user.name.split(' ').map(part=>part[0]).slice(0,2).join('').toUpperCase())}</span><span><strong>${escapeHtml(user.name)}</strong><small>${escapeHtml(user.location)} • ${escapeHtml(user.position)}</small></span><em>${user.semesterPoints||0} PTS</em><i>${index<3?'★':'—'}</i></div>`).join(''):'<p class="empty-note">Nenhum jogador cadastrado ainda.</p>'}catch{}}
