@@ -1,35 +1,18 @@
-# Atualizações da aplicação BASTREET
+﻿# Atualizações — FUTSTREET
 
-## Partidas e matchmaking
+- Seis artes originais geradas: login, bola transparente da navegação e atletas dos quatro treinos. Arquivos otimizados em WebP, tipografia em HTML e composição adaptada a desktop e celular.
+- Busca rápida 5 × 5 preservada. Duelo 2 × 2, Trio 3 × 3 e Quarteto 4 × 4 têm filas independentes com usuários reais. A mesma conta não duplica entrada e só fica em um formato por vez.
+- Todos os formatos mantêm confirmação individual, chat privado por partida, seleção de quadra por cidade/UF e registro único de 100 XP e 50 pontos após todos confirmarem.
+- A ação Ir treinar abre os treinos mantendo o heartbeat da busca. O aviso da fila permite voltar ou sair; recarregar retoma uma busca ainda válida.
+- Olinda, PE é a origem do projeto e a referência sem GPS. A Vila Olímpica de Rio Doce foi acrescentada à base regional a partir da visita relatada pelo grupo.
+- O mapa usa GPS também em outras regiões. A consulta procura futsal e quadras de futebol com piso duro ou cobertas, com cache e referência regional identificados na interface.
+- Cadastro sem altura. Gênero com Mulher, Homem e Outro. Cidade e UF obrigatórias no cadastro e na atualização de perfil, com validação também na API.
+- Contas, credenciais, mensagens, treinos concluídos, pontos e partidas anteriores continuam preservados.
 
-- A fila recebe contas autenticadas e mostra os jogadores ativos em tempo real. Uma entrada expira após 30 segundos sem resposta.
-- Seis jogadores formam dois times de três por ordem de entrada, sem pontuação ou análise de perfil para separar os times.
-- A quadra considera a cidade salva no perfil. Prioriza a cidade com maioria no grupo e busca uma opção intermediária quando as cidades ficam divididas.
-- A partida oferece confirmação individual, detalhes dos times, rota para o Google Maps e conversa privada restrita aos seis participantes.
-- Depois que os seis confirmam presença, cada participante pode registrar que jogou. O registro único concede 100 XP e 50 pontos semestrais.
+## Verificação
 
-## Cadastro, perfil e ranking
+`npm test` verifica API, filas de todos os formatos, troca de formato, duplicação, expiração, chats privados, confirmação, pontuação, treinos, cadastro, cidade/UF e arquivos de imagem usando bases descartáveis.
 
-- Novas contas persistem no banco configurado por `DATABASE_URL` e começam no nível 0, com XP, pontos, partidas e treinos zerados.
-- O perfil mostra estatísticas reais e permite atualizar a cidade usada na busca de quadras.
-- O ranking não inclui contas que ainda não acumularam pontos.
+`node scripts/verify-interface.cjs` verifica cadastro pela interface, composição em desktop/celular, treino enquanto espera, heartbeat, retomada, partida 2 × 2 real, busca rápida padrão, GPS simulado em São Paulo e movimento reduzido.
 
-## Treinos
-
-- Os exercícios exibem ilustrações animadas e instruções específicas.
-- Ao iniciar, um cronômetro fica dentro do card do exercício. O servidor só aceita a conclusão após o tempo configurado.
-- Três treinos concluídos na semana liberam a dificuldade Intermediária; cinco liberam a Avançada.
-- O ranking de treinos mostra resultados reais separados por dificuldade.
-
-## Chat e segurança
-
-- O chat tem uma sala global e salas privadas para as partidas do usuário, com estilos visuais diferentes.
-- Conversas de partida só podem ser lidas e escritas pelos participantes.
-- As rotas de partida e ranking não enviam e-mail ou outros dados pessoais desnecessários.
-- O servidor publica apenas os arquivos da aplicação e do Leaflet; arquivos de ambiente e estado local não ficam acessíveis como arquivos estáticos.
-
-## Validação
-
-- A API foi verificada localmente com seis contas: fila, formação 3 × 3, seleção regional, confirmação, chat privado e registro de pontos sem duplicação.
-- Também foram verificadas a proteção de início/conclusão dos treinos, a persistência de cidade e as sintaxes de JavaScript.
-- A conexão de produção deve usar o projeto Supabase reativado pela variável secreta `DATABASE_URL`.
+A direção visual e os prompts completos estão em DESIGN.md e assets/visuals/prompts.json.

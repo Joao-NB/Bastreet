@@ -63,7 +63,7 @@ function createPostgresStore(connectionString, initialState) {
     },
     async read() {
       const result = await pool.query('SELECT data FROM bastreet_state WHERE id = 1');
-      if (!result.rows[0]) throw new Error('Estado principal do BASTREET não encontrado.');
+      if (!result.rows[0]) throw new Error('Estado principal do FUTSTREET não encontrado.');
       return result.rows[0].data;
     },
     async write(value) {

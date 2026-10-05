@@ -12,7 +12,7 @@ services:
       - key: NODE_VERSION
         value: 24.16.0
       - key: SEED_DEMO
-        value: "true"
+        value: "false"
       - key: ADMIN_EMAIL
         value: admin@teste.com
       - key: ADMIN_PASSWORD

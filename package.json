@@ -1,12 +1,13 @@
 {
-  "name": "bastreet-mvp",
+  "name": "futstreet-mvp",
   "version": "1.0.0",
   "private": true,
-  "description": "MVP de matchmaking de basquete por Elo",
+  "description": "Futsal, treinos guiados e comunidade de quadra",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "demo:prepare": "node scripts/prepare-demo.js"
+    "demo:prepare": "node scripts/prepare-demo.js",
+    "test": "node scripts/verify-futstreet.cjs && node scripts/verify-game-modes.cjs"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

@@ -1,55 +1,16 @@
-# Roteiro de demonstração — BASTREET
+﻿# Demonstração — FUTSTREET
 
-## Preparação
+Execute `npm run dev` e abra `http://localhost:4173`. Use contas distintas em navegadores, perfis ou celulares diferentes. Duelo 2 × 2 precisa de quatro jogadores; Trio 3 × 3, de seis; Quarteto 4 × 4, de oito; e Clássico 5 × 5, de dez. A busca rápida da navegação sempre usa 5 × 5. Os times seguem a ordem de entrada.
 
-Todos devem estar na mesma rede Wi-Fi. No computador que executará o servidor:
+O script `npm run demo:prepare` prepara dez atletas apenas para uma base local descartável e substitui `data/db.json`. As contas são `ruan@futstreet.demo`, `joao@futstreet.demo`, `daniel@futstreet.demo`, `barbara@futstreet.demo` e `atleta5@futstreet.demo` até `atleta10@futstreet.demo`. Senha de demonstração: `quadra123`. Contas reais existentes continuam usando suas credenciais originais.
 
-```bash
-npm run demo:prepare
-npm run dev
-```
+1. Cadastre uma conta com cidade e estado; mostre a identidade, as novas imagens e as posições de futsal no perfil.
+2. Abra Treinos: mostre os quatro exercícios ilustrados e o plano semanal.
+3. Inicie Sola & domínio. Mostre aquecimento, cronômetro e progresso. A conclusão só funciona após os oito minutos; atualizar a página retoma a sessão.
+4. Abra Quadras: mostre Olinda como origem, a referência da Vila Olímpica de Rio Doce, busca por quadras de futsal e rotas no Maps. Autorize o GPS para buscar na posição atual, também fora de Pernambuco.
+5. Escolha 2 × 2 em quatro contas ou 5 × 5 em dez. Mostre as filas separadas. Toque em Ir treinar e acompanhe o aviso da busca sem interromper o treino.
+6. Quando a partida se formar, confirme cada presença e abra o chat privado. Mostre que uma conta externa não participa dele.
+7. Depois do jogo e da confirmação de todos os participantes, registre a conclusão: 100 XP e 50 pontos, sem duplicação.
+8. Mostre ranking e chat da comunidade.
 
-O terminal exibirá o endereço de rede, semelhante a `http://192.168.1.3:4173`. Abra esse endereço nos quatro celulares. Se o Windows solicitar permissão de firewall, permita em redes privadas.
-
-## Contas da equipe
-
-Senha para todas: `quadra123`
-
-- `ruan@bastreet.demo`
-- `joao@bastreet.demo`
-- `daniel@bastreet.demo`
-- `barbara@bastreet.demo`
-
-## Apresentação sugerida
-
-1. Cada integrante entra em uma conta diferente.
-2. Permita a localização e mostre no mapa as quadras verificadas e as obtidas pelo OpenStreetMap.
-3. Abra **Como chegar** para demonstrar a integração de rota com o Google Maps.
-4. Uma pessoa registra presença em uma quadra; outra atualiza a lista e mostra a presença real.
-5. Duas pessoas enviam mensagens e mostram que o chat sincroniza em até três segundos.
-6. Uma pessoa conclui um treino, comprovando a atualização persistente de XP e pontos semestrais.
-7. As quatro contas apertam **Buscar partida**. A quarta entrada forma automaticamente dois times de 2×2 e o resultado aparece nos quatro dispositivos.
-8. Abra o ranking para mostrar que os pontos vêm de ações registradas, não de valores fixos da interface.
-
-## O que é real neste protótipo
-
-- Cadastro, login, hash de senha e sessão.
-- Persistência local dos usuários e atividades.
-- Chat compartilhado entre dispositivos.
-- Check-in temporário em quadras.
-- Registro diário de treinos sem duplicidade.
-- XP, nível técnico e pontos semestrais.
-- Fila de matchmaking e balanceamento de times.
-- Distância das quadras calculada a partir das coordenadas disponíveis.
-
-## Limitações assumidas
-
-- O servidor precisa permanecer ligado durante a apresentação.
-- Os dados ficam no computador da equipe, não em uma nuvem.
-- Três quadras são curadas pela equipe; as demais dependem da cobertura colaborativa do OpenStreetMap.
-- O cache geográfico é válido por 24 horas e garante resultados quando a API externa falhar.
-- Geolocalização em celulares pode ser bloqueada em HTTP; nesse caso, o aplicativo usa Torre, Recife como referência. No domínio HTTPS de produção, o GPS é solicitado normalmente.
-- O modo de banca usa quatro jogadores e partidas 2×2. O produto final pode elevar o mínimo para dez jogadores.
-- O bot simples é apenas um apoio de UX. O chat entre as contas da equipe é real.
-
-Essas limitações devem ser apresentadas como decisões de escopo do MVP, não como funcionalidades prontas para produção.
+Sem `DATABASE_URL`, os dados ficam no JSON local. Com a variável configurada, o servidor usa PostgreSQL. A localização precisa de HTTPS ou localhost; cobertura e atualização do mapa dependem do OpenStreetMap. Combine acesso e horário da quadra no chat.

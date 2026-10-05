@@ -3,38 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0b0c">
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-  <meta name="description" content="BASTREET — encontre partidas de basquete equilibradas perto de você.">
+  <meta name="theme-color" content="#101b1a">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=futstreet-2">
+  <meta name="description" content="FUTSTREET — encontre partidas de futsal perto de você.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="BASTREET">
-  <meta property="og:title" content="BASTREET — Encontre. Jogue. Evolua.">
-  <meta property="og:description" content="Encontre quadras e jogadores de basquete perto de você, forme times equilibrados e evolua a cada treino.">
+  <meta property="og:site_name" content="FUTSTREET">
+  <meta property="og:title" content="FUTSTREET — Sua rua. Seu jogo.">
+  <meta property="og:description" content="Encontre quadras e jogadores de futsal perto de você, forme seu time e evolua a cada treino. Um projeto nascido em Olinda, PE.">
   <meta property="og:url" content="__BASE_URL__">
-  <meta property="og:image" content="__BASE_URL__/assets/og-bastreet.png">
-  <meta property="og:image:width" content="1728">
-  <meta property="og:image:height" content="909">
-  <meta property="og:image:alt" content="BASTREET — basquete de rua, comunidade e evolução">
+  <meta property="og:image" content="__BASE_URL__/assets/og-futstreet.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="FUTSTREET — futsal, comunidade e evolução">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="BASTREET — Encontre. Jogue. Evolua.">
-  <meta name="twitter:description" content="Quadras, partidas, treinos e comunidade de basquete perto de você.">
-  <meta name="twitter:image" content="__BASE_URL__/assets/og-bastreet.png">
-  <title>BASTREET — Encontre. Jogue. Evolua.</title>
+  <meta name="twitter:title" content="FUTSTREET — Sua rua. Seu jogo.">
+  <meta name="twitter:description" content="Quadras, partidas, treinos e comunidade de futsal perto de você.">
+  <meta name="twitter:image" content="__BASE_URL__/assets/og-futstreet.png">
+  <title>FUTSTREET — Sua rua. Seu jogo.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="futstreet.css">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
-  <section class="auth-screen" id="auth-screen" aria-label="Acesso ao BASTREET">
+  <section class="auth-screen" id="auth-screen" aria-label="Acesso ao FUTSTREET">
     <div class="auth-visual">
-      <a class="brand auth-brand" href="#"><span class="brand-ball">●</span><span>BA<span>STREET</span></span></a>
-      <div class="auth-pitch"><p class="eyebrow">ENCONTRE. JOGUE. EVOLUA.</p><h1>A quadra<br><span>te espera.</span></h1><p>Encontre cinco jogadores reais, forme times 3 × 3 e combine o jogo perto do grupo.</p><div class="auth-proof"><span><strong>6</strong><small>jogadores por partida</small></span><span><strong>3 × 3</strong><small>em quadra</small></span><span><strong>1</strong><small>chat privado</small></span></div></div>
-      <div class="auth-ball" aria-hidden="true">🏀</div>
+      <a class="brand auth-brand" href="#"><img class="brand-mark" src="/assets/brand-mark.svg" alt=""><span>FUT<span>STREET</span></span></a>
+      <div class="auth-pitch"><p class="eyebrow">DA RUA PRA QUADRA.</p><h1>Pouco espaço.<br><span>Muito jogo.</span></h1><p>Nascido em Olinda. Feito para a sua quadra. Treine seu toque, encontre seu time e leve o jogo pra rua.</p><div class="auth-proof"><span><strong>10</strong><small>jogadores por partida</small></span><span><strong>5 × 5</strong><small>em quadra</small></span><span><strong>1</strong><small>chat privado</small></span></div></div>
+      <div class="auth-generated-art" aria-hidden="true"><img src="/assets/visuals/login.webp" alt="" width="1024" height="1536" fetchpriority="high"></div><div class="auth-edition">OLINDA, PE / CULTURA DE QUADRA <span>EST. 2026</span></div>
     </div>
     <div class="auth-panel"><div class="auth-box">
       <button class="auth-back" id="auth-back" hidden aria-label="Voltar">←</button>
@@ -49,11 +50,11 @@
         <div class="register-progress"><i class="active"></i><i></i><span>Etapa <b id="step-number">1</b> de 2</span></div>
         <div class="register-step active" data-step="1">
           <label>Nome completo<input name="name" placeholder="Como podemos chamar você?" required><span class="field-error">Informe seu nome.</span></label>
-          <div class="field-pair"><label>Idade<input type="number" name="age" placeholder="18" min="16" max="80" required><span class="field-error">Idade mínima: 16 anos.</span></label><label>Altura (cm)<input type="number" name="height" placeholder="182" min="130" max="230" required><span class="field-error">Informe sua altura.</span></label></div>
-          <label>Localização<input name="location" placeholder="Recife, PE" required><span class="field-error">Informe sua cidade.</span></label><button class="primary-cta auth-submit" type="button" id="next-register">Continuar <span>→</span></button>
+          <label>Idade<input type="number" name="age" placeholder="18" min="16" max="80" required><span class="field-error">Idade mínima: 16 anos.</span></label>
+          <div class="field-pair location-fields"><label>Cidade<input name="city" placeholder="Olinda" minlength="2" maxlength="80" autocomplete="address-level2" required><span class="field-error">Informe sua cidade.</span></label><label>Estado<select name="state" autocomplete="address-level1" required><option value="">UF</option><option value="AC">AC · Acre</option><option value="AL">AL · Alagoas</option><option value="AP">AP · Amapá</option><option value="AM">AM · Amazonas</option><option value="BA">BA · Bahia</option><option value="CE">CE · Ceará</option><option value="DF">DF · Distrito Federal</option><option value="ES">ES · Espírito Santo</option><option value="GO">GO · Goiás</option><option value="MA">MA · Maranhão</option><option value="MT">MT · Mato Grosso</option><option value="MS">MS · Mato Grosso do Sul</option><option value="MG">MG · Minas Gerais</option><option value="PA">PA · Pará</option><option value="PB">PB · Paraíba</option><option value="PR">PR · Paraná</option><option value="PE">PE · Pernambuco</option><option value="PI">PI · Piauí</option><option value="RJ">RJ · Rio de Janeiro</option><option value="RN">RN · Rio Grande do Norte</option><option value="RS">RS · Rio Grande do Sul</option><option value="RO">RO · Rondônia</option><option value="RR">RR · Roraima</option><option value="SC">SC · Santa Catarina</option><option value="SP">SP · São Paulo</option><option value="SE">SE · Sergipe</option><option value="TO">TO · Tocantins</option></select><span class="field-error">Escolha o estado.</span></label></div><button class="primary-cta auth-submit" type="button" id="next-register">Continuar <span>→</span></button>
         </div>
         <div class="register-step" data-step="2">
-          <div class="field-pair"><label>Posição<select name="position" required><option value="">Selecione</option><option>Armador</option><option>Ala-armador</option><option>Ala</option><option>Ala-pivô</option><option>Pivô</option></select><span class="field-error">Escolha sua posição.</span></label><label>Gênero<select name="gender" required><option value="">Selecione</option><option>Mulher</option><option>Homem</option><option>Não binário</option><option>Prefiro não informar</option></select><span class="field-error">Selecione uma opção.</span></label></div>
+          <div class="field-pair"><label>Posição<select name="position" required><option value="">Selecione</option><option>Goleiro</option><option>Fixo</option><option>Ala</option><option>Pivô</option></select><span class="field-error">Escolha sua posição.</span></label><label>Gênero<select name="gender" required><option value="">Selecione</option><option>Mulher</option><option>Homem</option><option>Outro</option></select><span class="field-error">Selecione uma opção.</span></label></div>
           <p class="register-level-note">Você começa no nível 0. Jogos e treinos fazem seu perfil evoluir.</p>
           <fieldset class="day-picker"><legend>Dias disponíveis</legend><label><input type="checkbox" checked>Ter</label><label><input type="checkbox">Qua</label><label><input type="checkbox" checked>Qui</label><label><input type="checkbox" checked>Sáb</label><label><input type="checkbox">Dom</label></fieldset>
           <label>E-mail<input type="email" name="email" placeholder="voce@email.com" required><span class="field-error">Informe um e-mail válido.</span></label>
@@ -64,8 +65,8 @@
     </div></div>
   </section>
   <header class="topbar">
-    <a class="brand" id="brand-home" href="#inicio" aria-label="BASTREET, página inicial">
-      <span class="brand-ball" aria-hidden="true">●</span><span>BA<span>STREET</span></span>
+    <a class="brand" id="brand-home" href="#inicio" aria-label="FUTSTREET, página inicial">
+      <img class="brand-mark" src="/assets/brand-mark.svg" alt=""><span>FUT<span>STREET</span></span>
     </a>
     <div class="top-actions">
       <button class="icon-button" aria-label="Mensagens" data-page="chat">⌁<span class="notification-dot"></span></button>
@@ -77,23 +78,21 @@
     <section class="page active" id="inicio" aria-labelledby="welcome-title">
       <div class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">RECIFE • PE</p>
+          <p class="eyebrow">OLINDA • PE</p>
           <h1 id="welcome-title">E aí, <span>João!</span><br>Pronto pro jogo?</h1>
-          <p class="hero-subtitle">Entre na fila com a comunidade. Com seis jogadores, montamos dois times de três e encontramos uma quadra perto do grupo.</p>
-          <button class="primary-cta" id="find-match"><span>Buscar partida</span><span class="arrow">↗</span></button>
+          <p class="hero-subtitle">Seu próximo jogo começa com a comunidade. Busca rápida 5 × 5 ou um formato no seu ritmo.</p>
+          <button class="primary-cta" id="find-match"><span>Partida rápida</span><span class="quick-format">5 VS 5 ↗</span></button>
           <div class="online"><i></i><strong id="home-queue-count">0 jogadores</strong> buscando partida agora</div>
         </div>
         <div class="hero-art" aria-hidden="true">
-          <div class="court-lines"></div><div class="big-ball">🏀</div><span class="scribble">BORA!</span>
+          <img class="hero-court-art" src="/assets/visuals/login.webp" alt="" width="1024" height="1536"><span class="court-stamp">05 × 05<br><small>JOGO DE VERDADE</small></span>
         </div>
       </div>
 
       <div class="content-grid">
         <div>
           <div class="section-heading"><div><p class="eyebrow">ESCOLHA SEU RITMO</p><h2>Modos de jogo</h2></div></div>
-          <div class="mode-grid">
-            <button class="mode-card selected" data-mode="normal"><span class="mode-icon">◎</span><span><strong>Buscar partida</strong><small>6 jogadores reais • 3 × 3</small></span><em>Ao vivo</em></button>
-          </div>
+          <div class="mode-grid match-mode-grid"><button class="mode-card match-mode-card " data-mode="2v2" aria-label="Buscar partida 2 contra 2"><span class="mode-score">02<small>VS</small>02</span><span class="mode-caption"><strong>Duelo</strong><small>4 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="2v2">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button><button class="mode-card match-mode-card " data-mode="3v3" aria-label="Buscar partida 3 contra 3"><span class="mode-score">03<small>VS</small>03</span><span class="mode-caption"><strong>Trio</strong><small>6 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="3v3">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button><button class="mode-card match-mode-card " data-mode="4v4" aria-label="Buscar partida 4 contra 4"><span class="mode-score">04<small>VS</small>04</span><span class="mode-caption"><strong>Quarteto</strong><small>8 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="4v4">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button><button class="mode-card match-mode-card selected" data-mode="5v5" aria-label="Buscar partida 5 contra 5"><span class="mode-score">05<small>VS</small>05</span><span class="mode-caption"><strong>Clássico</strong><small>10 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="5v5">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button></div>
         </div>
 
         <aside class="elo-card">
@@ -112,7 +111,7 @@
 
     <section class="page" id="partidas" aria-labelledby="matches-title">
       <p class="eyebrow">SUA JORNADA</p><h1 class="page-title" id="matches-title">Partidas</h1>
-      <p class="page-lead">Partidas formadas por seis jogadores reais. Confirme sua presença e combine os detalhes no chat do grupo.</p>
+      <p class="page-lead">Seu time, sua quadra. Partidas de 2 × 2 a 5 × 5 com a comunidade.</p>
       <div id="matches-list" class="match-results"></div>
       <div id="match-details" class="match-details" hidden></div>
     </section>
@@ -123,44 +122,48 @@
     </section>
 
     <section class="page" id="quadras" aria-labelledby="courts-title">
-      <div class="page-head-row"><div><p class="eyebrow">JOGUE PERTO DE VOCÊ</p><h1 class="page-title" id="courts-title">Quadras</h1><p class="page-lead" id="location-label">Preparando o GPS para localizar você...</p></div><button class="locate-button" id="locate-me">⌖ Ativar localização</button></div>
+      <div class="page-head-row"><div><p class="eyebrow">OLINDA É A ORIGEM. SUA POSIÇÃO É O DESTINO.</p><h1 class="page-title" id="courts-title">Quadras</h1><p class="page-lead" id="location-label">Quadras de futsal perto de você · Olinda, PE como referência.</p></div><button class="locate-button" id="locate-me">⌖ Ativar localização</button></div>
+      <div class="project-origin"><span class="origin-badge">OLINDA / PE</span><p>Da Vila Olímpica de Rio Doce para a sua quadra.</p><span>Busca ao vivo pelo GPS</span></div>
       <div class="court-layout">
         <div class="map-sim" aria-label="Mapa real de quadras próximas"><div id="courts-map"></div><div class="map-distance">Raio de busca: <strong id="search-radius">8 km</strong><small id="map-source">GPS + OpenStreetMap</small></div></div>
-        <div class="court-results"><div class="result-toolbar"><strong><span id="court-count">3</span> quadras encontradas</strong><div><button id="refresh-courts" title="Atualizar OpenStreetMap">↻</button><select id="court-filter"><option value="distance">Mais próximas</option><option value="activity">Mais jogadores</option><option value="lighting">Com iluminação</option><option value="verified">Verificadas</option></select></div></div><div id="court-list"></div></div>
+        <div class="court-results"><div class="result-toolbar"><strong><span id="court-count">0</span> quadras encontradas</strong><div><button id="refresh-courts" title="Atualizar OpenStreetMap">↻</button><select id="court-filter"><option value="distance">Mais próximas</option><option value="activity">Mais jogadores</option><option value="lighting">Com iluminação</option><option value="verified">Verificadas</option></select></div></div><div id="court-list"></div></div>
       </div>
-      <section class="team-builder"><div class="team-builder-head"><div><p class="eyebrow">PARTIDA REAL</p><h2>Jogue com a comunidade</h2><p>Seis pessoas entram na fila para formar dois times de três. A quadra é escolhida pela região cadastrada no perfil.</p></div><button class="primary-cta" id="build-teams">Buscar partida <span>↗</span></button></div></section>
+      <section class="team-builder"><div class="team-builder-head"><div><p class="eyebrow">PARTIDA REAL</p><h2>Jogue com a comunidade</h2><p>Forme seu time com quem também está buscando. Quadras perto das cidades do grupo.</p></div><button class="primary-cta" id="build-teams">Buscar partida <span>↗</span></button></div></section>
     </section>
 
     <section class="page" id="treinos" aria-labelledby="training-title">
-      <div class="training-hero"><div><p class="eyebrow">EVOLUA TODO DIA</p><h1 class="page-title" id="training-title">Meus treinos</h1><p>Treine onde estiver, mantenha sua sequência e chegue mais preparado para jogar em grupo.</p></div><div class="level-ring"><span><small>NÍVEL</small><strong id="player-level">0</strong></span></div><div class="xp-block"><span><strong id="xp-value">0</strong> / 1.000 XP</span><div><i id="xp-bar"></i></div><small>XP para o próximo nível</small></div></div>
+      <div class="training-hero"><div><p class="eyebrow">LABORATÓRIO DE QUADRA</p><h1 class="page-title" id="training-title">Lapide seu jogo</h1><p>Domine a sola. Acerte o passe. Decida mais rápido. Sessões guiadas para levar seu próximo toque a outro nível.</p></div><div class="level-ring"><span><small>NÍVEL</small><strong id="player-level">0</strong></span></div><div class="xp-block"><span><strong id="xp-value">0</strong> / 1.000 XP</span><div><i id="xp-bar"></i></div><small>XP para o próximo nível</small></div></div>
       <div class="training-summary"><span><strong id="weekly-progress">0 / 5</strong><small>Treinos nesta semana</small></span><span><strong>3 treinos</strong><small>Liberam Intermediário</small></span><span><strong>5 treinos</strong><small>Liberam Avançado</small></span><span><strong id="training-total">0</strong><small>Treinos concluídos</small></span></div>
-      <div class="section-heading training-heading"><div><p class="eyebrow">PLANO DE HOJE</p><h2>Treinos por dificuldade</h2></div></div>
+      <div class="training-queue" id="training-queue" hidden><span class="queue-live-dot"></span><div><small>BUSCA ATIVA</small><strong id="training-queue-label">5 × 5 · 0 / 10</strong></div><button class="text-button" id="resume-search">Ver busca ↗</button><button class="queue-exit" id="leave-training-queue" aria-label="Sair da fila">×</button></div>
+      <section class="weekly-plan" aria-labelledby="plan-title"><div class="plan-intro"><p class="eyebrow">SUA SEMANA EM QUADRA</p><h2 id="plan-title">Consistência vira habilidade.</h2><p>Três dias de prática, com um dia de recuperação entre eles. Escolha os blocos liberados para seu nível.</p></div><div class="plan-days"><article><span>01 / SEGUNDA</span><h3>Domínio + passe</h3><p>Controle com a sola e passe na parede · 18 min</p></article><article><span>02 / QUARTA</span><h3>Condução + mudança</h3><p>Repita o controle e acrescente condução entre cones quando liberada · 8–22 min</p></article><article><span>03 / SEXTA</span><h3>Passe + finalização</h3><p>Passe na parede e, quando liberada, finalização · 10–23 min</p></article></div><p class="plan-note">Cada bloco já inclui aquecimento, séries, pausas e volta à calma. Comece pelo ritmo confortável e priorize a qualidade do toque.</p></section>
+      <div class="section-heading training-heading"><div><p class="eyebrow">TOQUE A TOQUE</p><h2>Seu treino começa aqui</h2></div></div>
       <div class="workout-grid" id="workout-grid"></div>
+      <section class="training-game-modes"><div class="section-heading"><div><p class="eyebrow">DO TREINO PRA QUADRA</p><h2>Escolha seu jogo</h2></div><span class="mode-region-tag">OLINDA / PE</span></div><div class="mode-grid match-mode-grid"><button class="mode-card match-mode-card " data-mode="2v2" aria-label="Buscar partida 2 contra 2"><span class="mode-score">02<small>VS</small>02</span><span class="mode-caption"><strong>Duelo</strong><small>4 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="2v2">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button><button class="mode-card match-mode-card " data-mode="3v3" aria-label="Buscar partida 3 contra 3"><span class="mode-score">03<small>VS</small>03</span><span class="mode-caption"><strong>Trio</strong><small>6 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="3v3">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button><button class="mode-card match-mode-card " data-mode="4v4" aria-label="Buscar partida 4 contra 4"><span class="mode-score">04<small>VS</small>04</span><span class="mode-caption"><strong>Quarteto</strong><small>8 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="4v4">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button><button class="mode-card match-mode-card selected" data-mode="5v5" aria-label="Buscar partida 5 contra 5"><span class="mode-score">05<small>VS</small>05</span><span class="mode-caption"><strong>Clássico</strong><small>10 atletas</small></span><span class="mode-presence"><i></i><b data-mode-count="5v5">0</b> na fila</span><span class="mode-arrow" aria-hidden="true">↗</span></button></div></section>
       <section class="training-ranking"><p class="eyebrow">DESTAQUES</p><h2>Ranking de treinos</h2><div id="training-ranking-list"></div></section>
     </section>
 
     <section class="page" id="chat" aria-labelledby="chat-title">
       <p class="eyebrow">ORGANIZE O JOGO</p><h1 class="page-title" id="chat-title">Mensagens</h1>
-      <div class="chat-shell"><aside class="chat-list" id="chat-list"></aside><section class="chat-panel"><header><span class="mini-avatar" id="chat-avatar">🌐</span><span><strong id="chat-name">Comunidade BASTREET</strong><small id="chat-subtitle">Conversa global</small></span></header><div class="messages" id="messages"></div><form class="chat-compose" id="chat-form"><input id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off" maxlength="500"><button type="submit" aria-label="Enviar">➤</button></form></section></div>
+      <div class="chat-shell"><aside class="chat-list" id="chat-list"></aside><section class="chat-panel"><header><span class="mini-avatar" id="chat-avatar">🌐</span><span><strong id="chat-name">Comunidade FUTSTREET</strong><small id="chat-subtitle">Conversa global</small></span></header><div class="messages" id="messages"></div><form class="chat-compose" id="chat-form"><input id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off" maxlength="500"><button type="submit" aria-label="Enviar">➤</button></form></section></div>
     </section>
 
     <section class="page" id="perfil" aria-labelledby="profile-title">
       <div class="profile-hero"><div class="profile-photo">JG<span>✎</span></div><div><p class="eyebrow">MEU PERFIL</p><h1 id="profile-title">Seu perfil</h1><p id="profile-summary">⌖ Sua cidade</p><div class="tags" id="profile-tags"><span>Nível 0</span></div></div><button class="secondary-button" id="edit-profile">Editar cidade</button></div>
-      <form id="profile-edit-form" class="profile-edit-form" hidden><label>Cidade onde você mora<input id="profile-location" name="location" required maxlength="100" placeholder="Ex.: Olinda, PE"></label><button class="primary-cta" type="submit">Salvar cidade</button></form>
+      <form id="profile-edit-form" class="profile-edit-form" hidden><div class="field-pair location-fields"><label>Cidade<input id="profile-city" name="city" required minlength="2" maxlength="80" placeholder="Olinda" autocomplete="address-level2"></label><label>Estado<select id="profile-state" name="state" required autocomplete="address-level1"><option value="">UF</option><option value="AC">AC · Acre</option><option value="AL">AL · Alagoas</option><option value="AP">AP · Amapá</option><option value="AM">AM · Amazonas</option><option value="BA">BA · Bahia</option><option value="CE">CE · Ceará</option><option value="DF">DF · Distrito Federal</option><option value="ES">ES · Espírito Santo</option><option value="GO">GO · Goiás</option><option value="MA">MA · Maranhão</option><option value="MT">MT · Mato Grosso</option><option value="MS">MS · Mato Grosso do Sul</option><option value="MG">MG · Minas Gerais</option><option value="PA">PA · Pará</option><option value="PB">PB · Paraíba</option><option value="PR">PR · Paraná</option><option value="PE">PE · Pernambuco</option><option value="PI">PI · Piauí</option><option value="RJ">RJ · Rio de Janeiro</option><option value="RN">RN · Rio Grande do Norte</option><option value="RS">RS · Rio Grande do Sul</option><option value="RO">RO · Rondônia</option><option value="RR">RR · Roraima</option><option value="SC">SC · Santa Catarina</option><option value="SP">SP · São Paulo</option><option value="SE">SE · Sergipe</option><option value="TO">TO · Tocantins</option></select></label></div><button class="primary-cta" type="submit">Salvar cidade</button></form>
       <div class="profile-grid"><div class="stat-panel"><span><small>PONTOS SEMESTRAIS</small><strong id="profile-points">0</strong></span><span><small>RANKING LOCAL</small><strong id="profile-rank">0</strong></span><span><small>PARTIDAS</small><strong id="profile-matches">0</strong></span><span><small>TREINOS</small><strong id="profile-trainings">0</strong></span></div><div class="history-panel"><p class="eyebrow">SUA EVOLUÇÃO</p><h2>Comece a jogar</h2><p>Busque uma partida ou conclua um treino para acompanhar seu progresso aqui.</p></div></div>
       <button class="logout-button" id="logout-button">Sair da conta</button>
     </section>
   </main>
 
   <nav class="bottom-nav" aria-label="Navegação principal">
-    <button class="active" data-page="inicio"><span>⌂</span>Início</button><button data-page="quadras"><span>⌖</span>Quadras</button><button class="play-nav" id="nav-match" aria-label="Buscar partida"><span>🏀</span></button><button data-page="treinos"><span>ϟ</span>Treinos</button><button data-page="chat"><span>◌</span>Chat</button>
+    <button class="active" data-page="inicio"><span>⌂</span>Início</button><button data-page="quadras"><span>⌖</span>Quadras</button><button class="play-nav" id="nav-match" aria-label="Buscar partida rápida 5 contra 5"><span><img src="/assets/visuals/ball.webp" alt="" width="44" height="44"></span></button><button data-page="treinos"><span>ϟ</span>Treinos</button><button data-page="chat"><span>◌</span>Chat</button>
   </nav>
 
   <div class="match-overlay" id="match-overlay" aria-hidden="true">
     <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
       <button class="close-modal" id="close-modal" aria-label="Fechar">×</button>
-      <div class="searching-state" id="searching-state"><div class="radar"><span>🏀</span><i></i><i></i><i></i></div><p class="eyebrow">FILA AO VIVO</p><h2 id="search-title">Buscando partida...</h2><p id="queue-description">Aguardando seis jogadores reais.</p><div id="queue-players" class="queue-players"></div><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong id="queue-needed">6</strong><small>jogadores para jogar</small></span></div><button class="secondary-button" id="cancel-search">Sair da fila</button></div>
-      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p></p><div class="team-balance"><div><small>TIME LARANJA</small><strong>3</strong><span>jogadores</span></div><b>VS</b><div><small>TIME PRETO</small><strong>3</strong><span>jogadores</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button></div>
+      <div class="searching-state" id="searching-state"><div class="radar"><span><img src="/assets/visuals/ball.webp" alt="" width="62" height="62"></span><i></i><i></i><i></i></div><p class="eyebrow">FILA AO VIVO</p><h2 id="search-title">Buscando 5 × 5</h2><p id="queue-description">Conectando sua comunidade.</p><div id="queue-players" class="queue-players"></div><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong id="queue-needed">10</strong><small>jogadores para jogar</small></span></div><div class="queue-actions"><button class="primary-cta" id="train-while-waiting">Ir treinar <span>↗</span></button><button class="secondary-button" id="cancel-search">Sair da fila</button></div></div>
+      <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p></p><div class="team-balance"><div><small>TIME LIMA</small><strong>5</strong><span>jogadores</span></div><b>VS</b><div><small>TIME AZUL</small><strong>5</strong><span>jogadores</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button></div>
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

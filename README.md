@@ -1,6 +1,6 @@
-# BASTREET
+# FUTSTREET
 
-Aplicação responsiva de partidas 3 × 3 de basquete, criada para o projeto de extensão da UNINASSAU.
+Aplicação de futsal, treinos e comunidade criada para o projeto de extensão da UNINASSAU em Olinda, PE. A visita do grupo à Vila Olímpica de Rio Doce motivou a escolha do futsal, em sintonia com o espaço, as escolinhas e os grupos de jogadores locais.
 
 ## Executar
 
@@ -9,11 +9,15 @@ Aplicação responsiva de partidas 3 × 3 de basquete, criada para o projeto de 
 3. Execute `npm run dev`.
 4. Acesse `http://localhost:4173`.
 
+Execute `npm test` para verificar API, progressão e todos os formatos de jogo em bases descartáveis. `node scripts/verify-interface.cjs` verifica a interface em Chrome no Windows; usa contas descartáveis e simula GPS em outro estado.
+
 O frontend usa HTML, CSS, JavaScript e Leaflet. A API usa Node.js e o driver `pg` para PostgreSQL.
 
 ## Fluxos disponíveis
 
-- Entre na fila com uma conta própria. O servidor forma dois times de três quando há seis jogadores ativos.
+- A busca rápida sempre usa 5 × 5. Os cards Duelo, Trio, Quarteto e Clássico iniciam filas 2 × 2, 3 × 3, 4 × 4 e 5 × 5, com quatro, seis, oito ou dez pessoas reais.
+- Cada formato tem uma fila separada. Uma conta só fica em uma fila por vez; trocar o formato remove a entrada anterior.
+- Toque em **Ir treinar** durante a busca: o treino abre e a fila continua enviando heartbeat. O aviso em Treinos permite voltar à busca ou sair. Atualizar a página retoma a fila ainda ativa.
 - Veja quem entrou na fila, confirme presença, consulte a quadra, abra a rota no Maps e converse no chat privado da partida.
 - A quadra considera as cidades do perfil: prioriza a cidade da maioria ou a região intermediária quando o grupo se divide.
 - Consulte partidas, ranking e perfil do jogador. A cidade do perfil pode ser atualizada.
@@ -27,24 +31,36 @@ Em produção, a variável `DATABASE_URL` ativa o PostgreSQL e torna persistente
 
 ## Autenticação
 
-O login e o cadastro usam uma API real, hash de senha com `scrypt` e tokens de sessão. O cadastro armazena nome, idade, altura, cidade, posição, gênero e dias disponíveis. Novas contas começam no nível 0, sem pontos, partidas ou treinos. Expiração de sessões e recuperação de senha permanecem como evoluções posteriores.
+O login e o cadastro usam uma API real, hash de senha com `scrypt` e tokens de sessão. O cadastro armazena nome, idade, cidade com UF, posição, gênero e dias disponíveis. Cidade e estado são obrigatórios em campos separados; a API também valida o formato e as 27 UFs. As opções de gênero são Mulher, Homem e Outro. Altura foi removida do cadastro e da apresentação do perfil; contas anteriores continuam preservadas. Novas contas começam no nível 0, sem pontos, partidas ou treinos. Expiração de sessões e recuperação de senha permanecem como evoluções posteriores.
 
 ## Regras de progressão do MVP
 
-- **Partidas:** seis contas distintas na fila ativa; times 3 × 3 na ordem de entrada, sem análise de habilidade. A fila expira quando um participante deixa de responder por 30 segundos.
-- **Participação:** cada jogador confirma a presença. Quando os seis confirmam, o botão para registrar o jogo concluído concede 100 XP e 50 pontos uma única vez por jogador.
+- **Partidas:** cada formato reúne o número exato de contas distintas e divide os times pela ordem de entrada. Não há atletas simulados nem análise de habilidade para a separação. A fila expira após 30 segundos sem heartbeat.
+- **Participação:** cada jogador confirma a presença. Quando todos os participantes do formato confirmam, o botão para registrar o jogo concluído concede 100 XP e 50 pontos uma única vez por jogador.
 - **Treinos:** o servidor exige o tempo completo do exercício antes de conceder XP e pontos. Três treinos na semana liberam Intermediário; cinco liberam Avançado. A meta reinicia na segunda-feira em UTC.
 - **Ranking de treinos:** mostra conclusões reais separadas por dificuldade.
 - **Pontos semestrais:** acumulam com treinos e aparecem no ranking de jogadores.
 
-As quadras usam uma base regional pré-carregada para Recife e Olinda, complementada por resultados reais da API Overpass/OpenStreetMap. A aba abre primeiro com essa visão local, sem esperar o serviço externo. Assim que o GPS responde, o servidor pesquisa automaticamente ao redor das coordenadas recebidas e a interface incorpora o resultado em segundo plano. Sem permissão, Torre/Recife é usada como referência. A busca começa em 8 km e aumenta automaticamente para 25 km quando há poucos resultados. A contingência de Olinda inclui referências em Rio Doce, Bultrins e Ouro Preto; a existência de estrutura para basquete na [Vila Olímpica](https://www.olinda.pe.gov.br/noticias/vila-olimpica-de-rio-doce-cadastra-interessados-em-praticar-esportes) e na [Quadra Milton Pina](https://www.olinda.pe.gov.br/moradores-dos-bultrins-terao-nova-opcao-de-lazer-com-quadra-poliesportiva-renovada/) é documentada pela Prefeitura de Olinda. O botão **Como chegar** abre a rota no Google Maps sem exigir chave de API.
+As quadras são obtidas por OpenStreetMap usando tags de futsal e quadras de futebol com piso duro ou cobertas; campos de grama não são incluídos pela consulta. Olinda, PE é a referência inicial quando o GPS não está disponível. A base regional contém a Vila Olímpica de Rio Doce, visitada pelo grupo, e a Quadra Poliesportiva Milton Pina, cuja estrutura com balizas foi documentada pela [Prefeitura de Olinda](https://www.olinda.pe.gov.br/moradores-dos-bultrins-terao-nova-opcao-de-lazer-com-quadra-poliesportiva-renovada/). Horários, acesso e adequação do piso devem ser combinados com o grupo. Quadras exclusivas da modalidade anterior foram removidas, e caches antigos são ignorados. A busca usa a posição atual do GPS também fora de Olinda e Pernambuco, começa em 8 km e pode ampliar para 25 km. O acompanhamento atualiza a busca após deslocamentos de 350 m, respeitando um intervalo mínimo de 15 segundos. O botão de atualização permite solicitar novos dados. O cache de quadras dura até 24 horas; se a fonte externa falhar, a tela identifica a referência regional ou cache. GPS ao vivo não significa disponibilidade de quadra em tempo real. O botão **Como chegar** abre o Maps.
 
 ## Demonstração com o grupo
 
-Para testar uma partida, abra a aplicação em seis navegadores ou celulares, cadastre seis contas diferentes e toque em **Buscar partida** em cada uma. As quatro contas do script `npm run demo:prepare` não bastam para fechar uma partida.
+Para testar uma partida, abra a aplicação em dez navegadores ou celulares, cadastre dez contas diferentes e toque em **Buscar partida** em cada uma. O script `npm run demo:prepare` gera dez contas para um ambiente local de demonstração; ele substitui os dados locais e deve ser usado somente em uma base descartável.
 
 ## Deploy
 
 O frontend e a API Node.js são publicados juntos no Render. O banco deve ser um PostgreSQL gerenciado externo, como Supabase ou Neon, conectado pela variável secreta `DATABASE_URL`.
 
 No Render, configure `DATABASE_URL` com a connection string do provedor e mantenha `DATABASE_SSL=true`. A aplicação cria a estrutura operacional automaticamente e a rota `/api/health` informa `database: postgresql` e `persistent: true`. A credencial nunca deve ser adicionada ao GitHub. Se o projeto Supabase estiver pausado, é preciso reativá-lo no [painel do Supabase](https://supabase.com/dashboard) para a aplicação conectar ao banco. No plano gratuito, [baixa atividade pode causar novas pausas](https://supabase.com/docs/guides/platform/free-project-pausing).
+
+## Identidade e treinos FUTSTREET
+
+Verde ácido, azul e grafite, monograma FS e linhas de quadra. Logo em `assets/logo.svg`, favicon em `assets/favicon.svg` e imagem social de 1200 × 630 em `assets/og-futstreet.png`.
+
+Os quatro blocos de futsal duram 8, 10, 14 e 12,5 minutos. Cada um traz aquecimento, séries com pausas, volta à calma, equipamento, instruções e um objetivo observável. A tela acompanha cada fase e respeita a preferência de redução de movimento. O plano semanal sugere três dias de prática intercalados. A contagem de XP e o desbloqueio semanal foram preservados.
+
+Contas, credenciais, mensagens e registros existentes não são substituídos. As sessões do navegador migram para o prefixo `futstreet-`. O identificador interno `bastreet_state` permanece para continuar lendo o banco existente. Posições antigas têm equivalência na apresentação; partidas históricas mantêm seu número de jogadores. Inícios de treino da rotina anterior precisam ser reiniciados, sem afetar conclusões e pontos já salvos.
+
+## Artes e direção visual
+
+Seis imagens originais foram geradas com o ImageGen integrado: cena para login, bola transparente para a navegação e quatro atletas representando os exercícios. Os arquivos WebP ficam em `assets/visuals/`. A cena também compõe o destaque inicial; os treinos usam imagens específicas e movimento discreto que respeita a preferência de movimento reduzido. A direção e os prompts completos estão em [DESIGN.md](DESIGN.md) e [assets/visuals/prompts.json](assets/visuals/prompts.json).
