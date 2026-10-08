@@ -26,7 +26,7 @@ async function main(){
   await cdp('Page.enable');await cdp('Runtime.enable');await cdp('Network.enable');await cdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});
   const base=`http://127.0.0.1:${port}`;for(let i=0;i<100;i++){try{await fetch(base+'/api/health');break}catch{await delay(100)}}
   const register=async(index)=>{const response=await fetch(base+'/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'QA '+index,email:`qa${index}@test.dev`,password:'quadra123',location:'Olinda, PE',gender:'Outro'})});assert.equal(response.status,201);return response.json()};
-  await viewport(1440,960);await cdp('Page.navigate',{url:base});await delay(1200);await evaluate('document.fonts.ready');await screenshot('login-desktop.png');
+  await viewport(1440,960);await cdp('Page.navigate',{url:base});await delay(1200);await evaluate('document.fonts.ready');await screenshot('login-desktop.png');await viewport(1280,570);await screenshot('login-short.png');await viewport(1440,960);
   assert.equal(await evaluate("document.querySelector('.auth-generated-art img').naturalWidth>0"),true);
   await evaluate("setAuthTab('register');(()=>{const form=document.querySelector('#register-form');for(const[name,value]of Object.entries({name:'João QA',age:'21',city:'Olinda'}))form.elements.namedItem(name).value=value;document.querySelector('#next-register').click()})()");
   assert.equal(await evaluate("document.querySelector('[data-step=\"1\"]').classList.contains('active')"),true,'UF precisa ser obrigatória');

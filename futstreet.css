@@ -411,3 +411,19 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 
 html:has(.auth-screen:not([hidden])){overflow:hidden}
 @media(max-width:900px){.hero-art{display:block;min-height:240px}}
+
+/* 2026 editorial art: the login illustration occupies a dedicated right strip. */
+.auth-visual{background:#101b1a}
+.auth-generated-art{inset:0 0 0 47%;mask-image:linear-gradient(to right,transparent,#000 20%);pointer-events:none}
+.auth-generated-art img{object-fit:cover;object-position:right center}
+.auth-pitch,.auth-brand,.auth-edition{position:relative;z-index:2}
+.hero-art{background:#101b1a}
+.hero-art .court-stamp{color:#f5f4e9;background:#101b1a;border-left:3px solid var(--lime);padding:8px 10px;text-shadow:none}
+.art-corner{background:#101b1a;color:#f5f4e9;opacity:1;padding:6px 8px;right:12px;bottom:12px}
+@media(max-width:900px){
+ .auth-generated-art{inset:0 0 0 44%}
+ .auth-generated-art img{object-position:right center}
+}
+@media(max-width:620px){
+ .auth-generated-art{inset:210px 0 39px 60%}
+}

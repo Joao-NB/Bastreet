@@ -27,7 +27,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="futstreet.css?v=graphic-3">
+  <link rel="stylesheet" href="futstreet.css?v=editorial-4">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -35,7 +35,7 @@
     <div class="auth-visual">
       <a class="brand auth-brand" href="#"><img class="brand-mark" src="/assets/brand-mark.svg" alt=""><span>FUT<span>STREET</span></span></a>
       <div class="auth-pitch"><p class="eyebrow">DA RUA PRA QUADRA.</p><h1>Pouco espaço.<br><span>Muito jogo.</span></h1><p>Nascido em Olinda. Feito para a sua quadra. Treine seu toque, encontre seu time e leve o jogo pra rua.</p><div class="auth-proof"><span><strong>10</strong><small>jogadores por partida</small></span><span><strong>5 × 5</strong><small>em quadra</small></span><span><strong>1</strong><small>chat privado</small></span></div></div>
-      <div class="auth-generated-art" aria-hidden="true"><img src="/assets/visuals/login.webp?v=graphic-3" alt="" width="1024" height="1536" fetchpriority="high"></div><div class="auth-edition">OLINDA, PE / CULTURA DE QUADRA <span>EST. 2026</span></div>
+      <div class="auth-generated-art" aria-hidden="true"><img src="/assets/visuals/login.webp?v=editorial-4" alt="" width="941" height="1672" fetchpriority="high"></div><div class="auth-edition">OLINDA, PE / CULTURA DE QUADRA <span>EST. 2026</span></div>
     </div>
     <div class="auth-panel"><div class="auth-box">
       <button class="auth-back" id="auth-back" hidden aria-label="Voltar">←</button>
@@ -85,7 +85,7 @@
           <div class="online"><i></i><strong id="home-queue-count">0 jogadores</strong> buscando partida agora</div>
         </div>
         <div class="hero-art" aria-hidden="true">
-          <img class="hero-court-art" src="/assets/visuals/home.webp?v=graphic-3" alt="" width="960" height="960"><span class="court-stamp">05 × 05<br><small>JOGO DE VERDADE</small></span>
+          <img class="hero-court-art" src="/assets/visuals/home.webp?v=editorial-4" alt="" width="960" height="960"><span class="court-stamp">05 × 05<br><small>JOGO DE VERDADE</small></span>
         </div>
       </div>
 
@@ -156,18 +156,18 @@
   </main>
 
   <nav class="bottom-nav" aria-label="Navegação principal">
-    <button class="active" data-page="inicio"><span>⌂</span>Início</button><button data-page="quadras"><span>⌖</span>Quadras</button><button class="play-nav" id="nav-match" aria-label="Buscar partida rápida 5 contra 5"><span><img src="/assets/ball-flat.svg?v=graphic-3" alt="" width="44" height="44"></span></button><button data-page="treinos"><span>ϟ</span>Treinos</button><button data-page="chat"><span>◌</span>Chat</button>
+    <button class="active" data-page="inicio"><span>⌂</span>Início</button><button data-page="quadras"><span>⌖</span>Quadras</button><button class="play-nav" id="nav-match" aria-label="Buscar partida rápida 5 contra 5"><span><img src="/assets/ball-flat.svg?v=editorial-4" alt="" width="44" height="44"></span></button><button data-page="treinos"><span>ϟ</span>Treinos</button><button data-page="chat"><span>◌</span>Chat</button>
   </nav>
 
   <div class="match-overlay" id="match-overlay" aria-hidden="true">
     <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
       <button class="close-modal" id="close-modal" aria-label="Fechar">×</button>
-      <div class="searching-state" id="searching-state"><div class="radar"><span><img src="/assets/ball-flat.svg?v=graphic-3" alt="" width="62" height="62"></span><i></i><i></i><i></i></div><p class="eyebrow">FILA AO VIVO</p><h2 id="search-title">Buscando 5 × 5</h2><p id="queue-description">Conectando sua comunidade.</p><div id="queue-players" class="queue-players"></div><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong id="queue-needed">10</strong><small>jogadores para jogar</small></span></div><div class="queue-actions"><button class="primary-cta" id="train-while-waiting">Ir treinar <span>↗</span></button><button class="secondary-button" id="cancel-search">Sair da fila</button></div></div>
+      <div class="searching-state" id="searching-state"><div class="radar"><span><img src="/assets/ball-flat.svg?v=editorial-4" alt="" width="62" height="62"></span><i></i><i></i><i></i></div><p class="eyebrow">FILA AO VIVO</p><h2 id="search-title">Buscando 5 × 5</h2><p id="queue-description">Conectando sua comunidade.</p><div id="queue-players" class="queue-players"></div><div class="search-meta"><span><strong id="search-time">00:00</strong><small>tempo de busca</small></span><span><strong id="queue-needed">10</strong><small>jogadores para jogar</small></span></div><div class="queue-actions"><button class="primary-cta" id="train-while-waiting">Ir treinar <span>↗</span></button><button class="secondary-button" id="cancel-search">Sair da fila</button></div></div>
       <div class="found-state" id="found-state" hidden><div class="found-icon">✓</div><p class="eyebrow">PARTIDA ENCONTRADA</p><h2>Seu time está pronto!</h2><p></p><div class="team-balance"><div><small>TIME LIMA</small><strong>5</strong><span>jogadores</span></div><b>VS</b><div><small>TIME AZUL</small><strong>5</strong><span>jogadores</span></div></div><button class="primary-cta" id="confirm-match">Confirmar presença <span>→</span></button></div>
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="node_modules/leaflet/dist/leaflet.js"></script>
-  <script src="app.js?v=graphic-3"></script>
+  <script src="app.js?v=editorial-4"></script>
 </body>
 </html>

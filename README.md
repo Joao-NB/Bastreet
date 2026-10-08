@@ -63,6 +63,6 @@ Contas, credenciais, mensagens e registros existentes não são substituídos. A
 
 ## Artes e direção visual
 
-Seis novas ilustrações planas foram geradas com o ImageGen integrado: uma para login, outra para o início e quatro para os treinos. A direção é simples, lúdica e editorial, com formas de bola, quadra e trajetórias. Os WebP ficam em `assets/visuals/` e somam cerca de 118 KB. A direção e os prompts completos estão em [DESIGN.md](DESIGN.md) e [assets/visuals/prompts-v3.json](assets/visuals/prompts-v3.json).
+Seis novas ilustrações editoriais foram geradas com o ImageGen integrado: login, início e quatro treinos. O desenho usa grafite, azul, verde ácido e marfim, com linhas de quadra, pontilhado discreto e bolas sem gomos pentagonais. Os WebP ficam em `assets/visuals/` e somam cerca de 500 KB. A direção e os prompts completos estão em [DESIGN.md](DESIGN.md) e [assets/visuals/prompts-v4.json](assets/visuals/prompts-v4.json).
 
-O serviço no `render.yaml` agora se chama `futstreet`. A alteração do serviço publicado e a confirmação da URL precisam acontecer no Render; consulte [o roteiro](docs/RENDER_FUTSTREET.md).
+O serviço está publicado em [futstreet.onrender.com](https://futstreet.onrender.com/). O `render.yaml` define o nome `futstreet` e a branch `main` publica novas versões automaticamente; consulte [a configuração do deploy](docs/RENDER_FUTSTREET.md).
