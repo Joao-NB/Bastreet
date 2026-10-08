@@ -374,3 +374,40 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .auth-proof{max-width:390px;background:rgba(16,27,26,.64);padding:13px 16px;border:1px solid rgba(199,244,69,.18);border-radius:4px;backdrop-filter:blur(8px)}
 @media(min-width:1100px){.match-mode-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.match-mode-card{padding:17px;min-height:160px}.mode-score{font-size:40px;gap:9px}.mode-caption{flex-wrap:wrap;gap:4px}.mode-arrow{right:10px;top:14px;font-size:17px}}
 @media(max-width:900px){.auth-visual:before{background:linear-gradient(90deg,rgba(16,27,26,.9),rgba(16,27,26,.6) 50%,rgba(16,27,26,.1))}}
+
+/* Graphic edition: flat illustrations, clear space, no scenic overlays. */
+.noise{display:none}
+.auth-visual{background:var(--ink)}
+.auth-visual:before,.hero-art:before,.workout-art:after{display:none}
+.auth-generated-art img{object-position:center bottom}
+.auth-pitch>p:not(.eyebrow){text-shadow:none}
+.auth-proof{background:transparent;backdrop-filter:none;border:0;border-top:1px solid var(--line);border-radius:0;padding:18px 0}
+.auth-proof span{border-color:var(--line)}
+.auth-edition{border-color:var(--line)}
+.hero:before{display:none}
+.hero-art{background:var(--blue)}
+.hero-court-art{object-fit:contain;object-position:center;transform:none;filter:none}
+.hero-art .court-stamp{color:var(--ink);text-shadow:none;right:24px;bottom:24px}
+.workout-art{background:var(--white)}
+.workout-art img{transition:none}
+.workout-card:hover .workout-art img{transform:none}
+.workout-card.running .workout-art img{animation:none}
+.art-corner{color:var(--ink);opacity:.8;letter-spacing:1.6px}
+.workout-card.locked .workout-art img{opacity:1;filter:saturate(.65)}
+@media(max-width:900px){
+ .auth-generated-art{left:46%;top:85px;right:-45px;bottom:38px}
+ .auth-generated-art img{object-fit:cover;object-position:center bottom}
+ .auth-pitch{position:relative;z-index:1}
+ .auth-pitch>p:not(.eyebrow){max-width:270px}
+}
+@media(max-width:620px){
+ .auth-generated-art{left:74%;top:175px;right:-45px;bottom:44px}
+ .auth-pitch h1{font-size:clamp(44px,14vw,56px)}
+ .auth-pitch>p:not(.eyebrow){max-width:min(235px,58vw)}
+ .hero-art .court-stamp{right:16px;bottom:16px;font-size:30px}
+}
+
+.bottom-nav .play-nav img,.radar span img{filter:none}
+
+html:has(.auth-screen:not([hidden])){overflow:hidden}
+@media(max-width:900px){.hero-art{display:block;min-height:240px}}

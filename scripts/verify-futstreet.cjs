@@ -65,7 +65,7 @@ async function main(){
     await request('/api/trainings',users[1].token,'POST',{workoutId:'controle-bola'},400);
     const overview=await request('/api/me',token);assert.equal(overview.stats.trainings,1);assert.equal(overview.stats.matches,2);
     const html=await (await fetch(base)).text();assert.ok(html.includes('FUTSTREET — Sua rua. Seu jogo.'));assert.ok(!html.includes('__BASE_URL__'));assert.ok(!/basquete|BASTREET|🏀/.test(html));
-    for(const asset of ['futstreet.css','assets/logo.svg','assets/brand-mark.svg','assets/favicon.svg','assets/court-art.svg','assets/og-futstreet.png'])assert.equal((await fetch(base+'/'+asset)).status,200,asset);
+    for(const asset of ['futstreet.css','assets/logo.svg','assets/ball-flat.svg','assets/brand-mark.svg','assets/favicon.svg','assets/court-art.svg','assets/og-futstreet.png'])assert.equal((await fetch(base+'/'+asset)).status,200,asset);
     assert.equal((await fetch(base+'/data/db.json')).status,404);
     console.log('PASS: cadastro, autenticação, 5 × 5, confirmações, chat privado, XP sem duplicação, treino cronometrado, retomada, histórico e recursos.');
   } finally {server.kill();if(log)console.log(log)}

@@ -36,7 +36,7 @@ async function main(){
       await request(`/api/chats/${match.id}/messages`,token,'POST',{text:'Jogo '+mode},201);assert.equal((await request(`/api/chats/${match.id}/messages`,users[indices[1]].token)).messages[0].text,'Jogo '+mode);
     }
     const courts=await request('/api/courts?lat=-7.9938&lon=-34.8416');assert.ok(courts.courts.some(court=>court.id==='olinda-vila-olimpica'));assert.ok(courts.courts.every(court=>! /basquete/i.test(court.name)));
-    for(const asset of ['login','ball','controle-bola','passe-parede','agilidade','finalizacoes']){const response=await fetch(`${base}/assets/visuals/${asset}.webp`);assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'image/webp');}
+    for(const asset of ['login','home','ball','controle-bola','passe-parede','agilidade','finalizacoes']){const response=await fetch(`${base}/assets/visuals/${asset}.webp`);assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'image/webp');}
     assert.equal((await fetch(base+'/assets/visuals/prompts.json')).status,404);
     console.log('PASS: filas 2 × 2, 3 × 3, 4 × 4 e 5 × 5 isoladas, troca e duplicação, expiração, usuários reais, chats, confirmação, pontos, cidade/UF, Olinda e imagens.');
   }finally{child.kill()}

@@ -1,30 +1,28 @@
-﻿# Direção visual FUTSTREET
+# Direção visual FUTSTREET
 
-A identidade combina cultura de quadra em Olinda, recortes editoriais e o acabamento de interfaces esportivas de jogos contemporâneos. As imagens são autorais: não reproduzem personagens, marcas, uniformes ou interfaces de jogos existentes.
+A edição gráfica usa ilustração editorial plana: poucos elementos, formas simples, espaço livre e composições assimétricas. Bola, linhas de quadra e trajetórias são os motivos visuais. A paleta mantém grafite `#101b1a`, verde ácido `#c7f445`, azul `#7cafff` e marfim `#f5f4e9`.
 
-## Artes geradas
+## Artes da edição gráfica
 
-Foi usado o ImageGen integrado, sem CLI ou chave de API. As imagens foram revisadas para composição, proporção, pés em contato com a bola, exercício demonstrado e consistência da paleta. O ícone preserva transparência real. WebP reduz o peso das seis imagens de aproximadamente 12 MB para cerca de 600 KB, sem mudar o conteúdo da arte.
+Seis imagens novas foram geradas individualmente com o ImageGen integrado, sem CLI ou chave de API. Login e início têm composições próprias. Não há cenários realistas nem atletas em 3D. Os diagramas de treino são ilustrações conceituais; as instruções, séries, pausas e objetivos continuam em texto na interface.
 
 | Arquivo | Uso | Composição |
 | --- | --- | --- |
-| `assets/visuals/login.webp` | Login e destaque inicial | Quadra escultórica em perspectiva, bola em primeiro plano e espaço escuro para tipografia |
-| `assets/visuals/ball.webp` | Busca rápida na navegação e radar | Bola isolada com material tátil, detalhes em lima e azul e fundo transparente |
-| `assets/visuals/controle-bola.webp` | Sola & domínio | Pé de apoio plantado e sola controlando a bola |
-| `assets/visuals/passe-parede.webp` | Passe & primeiro toque | Passe rasteiro com trajetória de ida e volta na parede |
-| `assets/visuals/agilidade.webp` | Condução & mudança | Bola perto do pé, percurso entre quatro cones |
-| `assets/visuals/finalizacoes.webp` | Mira & finalização | Pé de apoio, chute de peito do pé e trajetória para o canto do gol |
+| `assets/visuals/login.webp` | Login | Fundo grafite, espaço para títulos, bola marfim e linha azul na base |
+| `assets/visuals/home.webp` | Início | Quadra gráfica inclinada sobre azul, bola lima e posições abstratas |
+| `assets/visuals/controle-bola.webp` | Sola & domínio | Recorte de calçado controlando a bola e seta lateral |
+| `assets/visuals/passe-parede.webp` | Passe & primeiro toque | Calçado, bola, parede e trajetórias de ida e volta |
+| `assets/visuals/agilidade.webp` | Condução & mudança | Quatro cones, bola e percurso sinuoso |
+| `assets/visuals/finalizacoes.webp` | Mira & finalização | Bola, trajetória e alvo no canto do gol |
 
-Os prompts finais completos, enviados individualmente para cada imagem, estão em [prompts.json](assets/visuals/prompts.json). Paleta: verde ácido `#c7f445`, grafite `#101b1a`, azul `#7cafff` e marfim. Não há texto embutido nas imagens: títulos, estados e botões continuam como HTML acessível.
+Os prompts completos estão em [prompts-v3.json](assets/visuals/prompts-v3.json). Os PNGs originais foram preservados em `output/imagegen/futstreet-v3/`. Os WebP usados pela aplicação somam aproximadamente 118 KB. A conversão e redução de dimensões preservam a composição; títulos e botões permanecem em HTML acessível.
 
 ## Composição da interface
 
-No desktop, o login mantém a imagem à esquerda e os formulários à direita. Uma camada escura protege a leitura dos títulos. No celular, a imagem vira uma abertura mais compacta, com o formulário abaixo. O botão central da navegação usa a bola transparente sem alterar sua área de toque.
+O login mantém a arte à esquerda e o formulário à direita no desktop. No celular, a bola aparece como detalhe à direita da abertura. A arte inicial é independente, com fundo azul e composição contida para preservar o desenho; no celular, aparece em uma faixa abaixo da chamada para a partida. As imagens dos treinos usam proporção 3:2, sem gradientes escuros ou animação de zoom. A textura de ruído foi retirada para dar mais clareza ao conjunto.
 
-Os modos usam placares grandes, nome curto, número de atletas e contagem real da fila. A busca rápida mantém 5 × 5. Duelo, Trio e Quarteto usam as mesmas regras de usuários, chats, confirmação e progressão. A ação Ir treinar mantém a fila ativa, com um aviso discreto para voltar ou sair.
-
-As ilustrações dos treinos representam a ação principal. A ficha mantém séries, tempo, pausas, fases e instruções práticas. O movimento é discreto e desativado quando o dispositivo prefere movimento reduzido.
+As URLs de CSS, JavaScript e das seis imagens incluem a versão `graphic-3`, para que navegadores que já tenham visitado o aplicativo recebam os arquivos novos. A navegação e o radar usam o ícone vetorial plano `assets/ball-flat.svg`, coerente com a edição gráfica.
 
 ## Olinda como origem
 
-A motivação territorial vem da visita relatada pelo grupo à Vila Olímpica de Rio Doce. Ela aparece como referência do projeto; horários e acesso precisam ser confirmados com a administração local. O GPS utiliza a localização atual do atleta, inclusive em outros estados. O município e a UF do perfil orientam a escolha de quadra para a partida e evitam ambiguidade entre cidades de mesmo nome.
+A motivação territorial vem da visita relatada pelo grupo à Vila Olímpica de Rio Doce. O GPS utiliza a localização atual do atleta, inclusive em outros estados. Cidade e UF do perfil orientam a escolha de quadra para a partida.

@@ -46,7 +46,7 @@ async function main(){
   assert.equal(await evaluate("document.querySelectorAll('.workout-art img').length"),4);
   await evaluate("startWorkout('controle-bola')");await delay(300);assert.ok((await evaluate("document.querySelector('.workout-phase').textContent")).includes('Aquecimento'));
   await viewport(390,844);await screenshot('workout-mobile.png');assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);
-  for(const page of ['inicio','partidas','quadras','chat','perfil','ranking','treinos']){await evaluate(`showPage('${page}')`);await delay(100);assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false,'Overflow '+page)}
+  for(const page of ['inicio','partidas','quadras','chat','perfil','ranking','treinos']){await evaluate(`showPage('${page}')`);await delay(100);assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false,'Overflow '+page);if(page==='inicio')await screenshot('home-mobile.png')}
   await evaluate("document.querySelector('.training-game-modes').scrollIntoView({block:'start',behavior:'instant'})");await screenshot('modes-mobile.png');
   for(let i=1;i<=3;i++){const registered=await register(i);const response=await fetch(base+'/api/matchmaking/join',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+registered.token},body:JSON.stringify({mode:'2v2'})});assert.equal(response.status,200)}
   for(let i=0;i<8;i++){if(await evaluate("document.querySelector('#found-state').hidden===false"))break;await delay(700)}
@@ -58,7 +58,7 @@ async function main(){
   await screenshot('gps-mobile.png');
   await cdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});await evaluate("showPage('treinos')");await delay(100);assert.equal(await evaluate("getComputedStyle(document.querySelector('.running .workout-art img')).animationName"),'none');
   await evaluate("document.querySelector('#logout-button').click();document.querySelector('#auth-screen').scrollTo(0,0);document.querySelector('#toast').classList.remove('show')");await delay(100);await screenshot('login-mobile.png');assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);
-  await viewport(320,740);assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false,'Login 320px');
+  await viewport(320,740);await screenshot('login-mobile-320.png');assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false,'Login 320px');
   assert.deepEqual(errors,[]);console.log('PASS navegador: artes, cidade/UF, cadastro, modos, fila em Treinos, heartbeat, retomada, 2 × 2 real, busca rápida 5 × 5, GPS fora de PE e responsividade.');console.log('Capturas em tmp/futstreet-v2-qa');
  }finally{ws?.close();chrome.kill();server.kill()}
 }

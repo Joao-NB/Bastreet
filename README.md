@@ -63,4 +63,6 @@ Contas, credenciais, mensagens e registros existentes não são substituídos. A
 
 ## Artes e direção visual
 
-Seis imagens originais foram geradas com o ImageGen integrado: cena para login, bola transparente para a navegação e quatro atletas representando os exercícios. Os arquivos WebP ficam em `assets/visuals/`. A cena também compõe o destaque inicial; os treinos usam imagens específicas e movimento discreto que respeita a preferência de movimento reduzido. A direção e os prompts completos estão em [DESIGN.md](DESIGN.md) e [assets/visuals/prompts.json](assets/visuals/prompts.json).
+Seis novas ilustrações planas foram geradas com o ImageGen integrado: uma para login, outra para o início e quatro para os treinos. A direção é simples, lúdica e editorial, com formas de bola, quadra e trajetórias. Os WebP ficam em `assets/visuals/` e somam cerca de 118 KB. A direção e os prompts completos estão em [DESIGN.md](DESIGN.md) e [assets/visuals/prompts-v3.json](assets/visuals/prompts-v3.json).
+
+O serviço no `render.yaml` agora se chama `futstreet`. A alteração do serviço publicado e a confirmação da URL precisam acontecer no Render; consulte [o roteiro](docs/RENDER_FUTSTREET.md).
